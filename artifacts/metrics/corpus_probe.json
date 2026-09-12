@@ -1,0 +1,18 @@
+{
+  "above_expected_high": true,
+  "accuracy": 0.9445,
+  "expected_high_threshold": 0.9,
+  "interpretation": "Accuracy of a TF-IDF + Logistic Regression probe predicting an email's source corpus from its text alone. A high score means the pooled corpora carry strong source markers, so headline random-split phishing scores are partly corpus recognition. This is a reported limitation, not a defect to fix.",
+  "macro_f1": 0.9081,
+  "per_corpus_f1": {
+    "CEAS_08": 0.9731,
+    "Enron": 0.9423,
+    "Ling": 0.8743,
+    "Nazario": 0.9213,
+    "Nigerian_Fraud": 0.8965,
+    "SpamAssasin": 0.841
+  },
+  "seed": 42,
+  "test_rows": 12373,
+  "train_rows": 57736
+}
