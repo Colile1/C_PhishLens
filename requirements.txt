@@ -1,0 +1,45 @@
+# requirements.txt — C_PhishLens
+# Purpose: project dependencies.
+# Author: Colile Sibanda
+#
+# UNPINNED. At the build, install these, verify `pip check` is clean, then
+# replace this file with the output of `pip freeze` so every later result is
+# reproducible from an exact environment. Do not leave it unpinned past step 1.
+
+# Core numerics and data
+numpy
+pandas
+scipy
+
+# Classical baseline (M0) and metrics
+scikit-learn
+
+# Deep model (M1)
+torch
+
+# Plotting — the brief requires Matplotlib specifically
+matplotlib
+
+# Explainability (extra features)
+lime
+# captum        # optional cross-check for M1, enable at step 12 if used
+# shap          # only if used instead of captum
+
+# Serving and desktop client
+fastapi
+uvicorn[standard]
+pydantic
+requests
+# tkinter ships with CPython on Windows; no package needed
+
+# Notebooks
+jupyterlab
+ipykernel
+
+# Config and testing
+pyyaml
+pytest
+
+# Stretch model M2 — install only if attempted
+# transformers
+# datasets

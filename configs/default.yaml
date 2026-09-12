@@ -1,0 +1,99 @@
+# configs/default.yaml
+# Purpose: single source of truth for every tunable value in the project.
+# Author: Colile Sibanda
+#
+# Nothing in src/ may hard-code a value that belongs here. The config loader
+# validates this file and fails with the name of any missing or
+# invalid field. Copy to configs/local.yaml for machine-specific overrides;
+# local.yaml is git-ignored.
+
+# Drives random, numpy, torch, the splitter and LIME. One seed, everywhere.
+seed: 42
+
+paths:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+  models: artifacts/models
+  figures: artifacts/figures
+  metrics: artifacts/metrics
+
+data:
+  # Corpus files expected in paths.raw. Confirm the exact names.
+  corpora:
+    - CEAS_08.csv
+    - Enron.csv
+    - Ling.csv
+    - Nazario.csv
+    - Nigerian_Fraud.csv
+    - SpamAssasin.csv
+  text_columns: [subject, body]
+  label_column: label
+  positive_label: 1          # 1 = phishing/spam, 0 = legitimate
+  # Columns kept for the audit and the corpus probe only. Never model inputs.
+  audit_only_columns: [sender, receiver, date, urls]
+  min_characters: 10         # rows shorter than this are dropped as corrupt
+
+preprocess:
+  lowercase: true
+  strip_html: true
+  url_placeholder: "<url>"
+  email_placeholder: "<email>"
+  number_placeholder: "<num>"
+  subject_body_separator: " <sep> "
+
+split:
+  train: 0.70
+  validation: 0.15
+  test: 0.15
+  stratify_by: label
+  # Grouping key. Content hash, so near-duplicates cannot span two splits.
+  group_by: content_hash
+
+features:
+  # M0 baseline
+  tfidf:
+    max_features: 50000
+    ngram_range: [1, 2]
+    min_df: 2
+  # M1 Text-CNN
+  vocabulary:
+    max_size: 40000
+    min_frequency: 2
+    unknown_token: "<unk>"
+    padding_token: "<pad>"
+  max_sequence_length: 400
+
+model:
+  name: text_cnn
+  embedding_dim: 128
+  filter_sizes: [3, 4, 5]
+  filters_per_size: 100
+  dropout: 0.5
+
+training:
+  batch_size: 64
+  learning_rate: 0.001
+  max_epochs: 30
+  class_weighting: true
+  early_stopping:
+    metric: val_macro_f1      # patience watches this, not loss
+    mode: max
+    patience: 3
+    min_delta: 0.001
+    restore_best_weights: true
+
+evaluation:
+  figure_dpi: 150
+
+explain:
+  method: lime
+  num_features: 15            # tokens shown per explanation
+  num_samples: 1000           # LIME perturbations per explanation
+  stability_seeds: [42, 1337] # same email, two seeds, compared at step 12
+
+serving:
+  host: 127.0.0.1
+  port: 8000
+  model_file: artifacts/models/text_cnn_best.pt
+  max_input_characters: 50000
