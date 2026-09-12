@@ -2,7 +2,7 @@
 
 **Project:** ITRI625 Machine Learning project — North-West University, Semester 2, 2026
 **Author:** Colile Sibanda
-**Repository:** _add the GitHub URL here_
+**Repository:** https://github.com/Colile1/C_PhishLens
 **Deadline:** _TBD in the brief — confirm and record here_
 
 A deep learning classifier that decides whether an email is phishing or
@@ -79,7 +79,7 @@ notebook, once, at the end.
 
 ## Status
 
-Scaffolding complete, no code written yet. Start in
+repository pushed to GitHub. No application code written yet. Start at build
 
 
 from the repository root.
