@@ -1,0 +1,20 @@
+{
+  "commit_hash": "1b3024233f57aa7b056a31cee31e0753d2aed95e",
+  "config_hash": "3f78ae66c380fce1",
+  "metrics": {
+    "accuracy": 0.9838,
+    "auc_roc": 0.9985,
+    "average_precision": 0.9986,
+    "f1": 0.9845,
+    "macro_f1": 0.9838,
+    "precision": 0.9834,
+    "recall": 0.9855
+  },
+  "model": "m0_tfidf_logreg",
+  "seed": 42,
+  "split_evaluated": "validation",
+  "threshold": 0.5,
+  "train_rows": 57736,
+  "validation_rows": 12372,
+  "vocabulary_size": 50000
+}
