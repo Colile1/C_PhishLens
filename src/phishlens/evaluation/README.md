@@ -9,7 +9,7 @@ and every one of them would end up in the report.
 
 | File | Responsibility |
 |------|----------------|
-| `metrics.py` | `compute_metrics(y_true, y_prob, threshold) -> Metrics` — accuracy, precision, recall, F1, macro-F1, AUC-ROC, and the confusion matrix counts. The positive class is asserted, not assumed. Pure: takes arrays, returns a dataclass, touches no files |
+| `metrics.py` | `compute_metrics(y_true, y_prob, threshold) -> Metrics` — accuracy, precision, recall, F1, macro-F1, AUC-ROC, average precision and the confusion matrix counts. The positive class is asserted, not assumed. Also `select_threshold(y_true, y_prob, objective)`, the validation-only operating-point search added by the design. Pure: takes arrays, returns a dataclass, touches no files |
 | `plots.py` | `plot_roc(...)`, `plot_precision_recall(...)`, `plot_confusion_matrix(...)`, `plot_loss_curve(...)` — each returns a Matplotlib `Figure` so a notebook can display it and the caller decides whether to save. Axis labels, titles and legends are mandatory, not optional |
 | `reporting.py` | `metrics_table(results: dict[str, Metrics]) -> DataFrame` for the M0 vs M1 comparison, and `per_corpus_table(...)` for the breakdown. Formatting only |
 | `persistence.py` | `save_metrics(metrics, path, context) -> None` — write the JSON with the commit hash, seed and config hash embedded, so a number in the report traces back to a run |
@@ -19,7 +19,10 @@ and every one of them would end up in the report.
 - Metrics take **probabilities**, not hard labels, so AUC and the PR curve are
   computable and the threshold stays an explicit argument.
 - The threshold comes from config, defaults to 0.5, and is reported next to
-  every metric that depends on it. See open question the question.
+  every metric that depends on it. the question is closed: report at 0.5 **and** at
+  a macro-F1-maximising operating point chosen by `select_threshold` on the
+  **validation split only**. Selecting against test would spend the once-only
+  test budget.
 - Every figure carries axis labels, a title naming the model and the split, and
   a legend where more than one series is drawn. A reader should not have to ask
   what a figure shows.
