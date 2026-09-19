@@ -1,0 +1,27 @@
+{
+  "commit_hash": "0b08d7455d02d26642f21af9d5cc1d3b58a1ab80",
+  "config_hash": "3f78ae66c380fce1",
+  "confusion_matrix": {
+    "false_negatives": 86,
+    "false_positives": 92,
+    "true_negatives": 5848,
+    "true_positives": 6347
+  },
+  "metrics": {
+    "accuracy": 0.9856,
+    "auc_roc": 0.9988,
+    "average_precision": 0.9989,
+    "f1": 0.9862,
+    "macro_f1": 0.9856,
+    "precision": 0.9857,
+    "recall": 0.9866
+  },
+  "model": "m0_tfidf_logreg",
+  "seed": 42,
+  "split_evaluated": "test",
+  "test_rows": 12373,
+  "threshold": 0.5055484954442034,
+  "threshold_policy": "validation_selected_macro_f1",
+  "train_rows": 57736,
+  "validation_rows": 12372
+}

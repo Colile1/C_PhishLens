@@ -1,0 +1,27 @@
+{
+  "commit_hash": "0b08d7455d02d26642f21af9d5cc1d3b58a1ab80",
+  "config_hash": "3f78ae66c380fce1",
+  "confusion_matrix": {
+    "false_negatives": 48,
+    "false_positives": 111,
+    "true_negatives": 5829,
+    "true_positives": 6385
+  },
+  "metrics": {
+    "accuracy": 0.9871,
+    "auc_roc": 0.9991,
+    "average_precision": 0.9992,
+    "f1": 0.9877,
+    "macro_f1": 0.9871,
+    "precision": 0.9829,
+    "recall": 0.9925
+  },
+  "model": "m1_text_cnn",
+  "seed": 42,
+  "split_evaluated": "test",
+  "test_rows": 12373,
+  "threshold": 0.5697653889656067,
+  "threshold_policy": "validation_selected_macro_f1",
+  "train_rows": 57736,
+  "validation_rows": 12372
+}
