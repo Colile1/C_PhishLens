@@ -1,0 +1,29 @@
+{
+  "best_epoch": 4,
+  "commit_hash": "3fd3e332fd3c6b06487cb30d6c60f545e6a43399",
+  "confusion_matrix": {
+    "false_negatives": 5332,
+    "false_positives": 1743,
+    "true_negatives": 15569,
+    "true_positives": 16510
+  },
+  "epochs_run": 7,
+  "held_out_corpus": "CEAS_08",
+  "metrics": {
+    "accuracy": 0.8193,
+    "auc_roc": 0.9281,
+    "average_precision": 0.9426,
+    "f1": 0.8235,
+    "macro_f1": 0.8192,
+    "precision": 0.9045,
+    "recall": 0.7559
+  },
+  "seed": 42,
+  "split_evaluated": "loco_held_out",
+  "stopped_early": true,
+  "test_rows": 39154,
+  "threshold": 0.3900477886199951,
+  "threshold_policy": "validation_selected_macro_f1",
+  "train_rows": 36827,
+  "validation_rows": 6500
+}

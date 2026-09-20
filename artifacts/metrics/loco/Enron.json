@@ -1,0 +1,29 @@
+{
+  "best_epoch": 5,
+  "commit_hash": "3fd3e332fd3c6b06487cb30d6c60f545e6a43399",
+  "confusion_matrix": {
+    "false_negatives": 1474,
+    "false_positives": 5360,
+    "true_negatives": 10431,
+    "true_positives": 12700
+  },
+  "epochs_run": 8,
+  "held_out_corpus": "Enron",
+  "metrics": {
+    "accuracy": 0.7719,
+    "auc_roc": 0.8914,
+    "average_precision": 0.8952,
+    "f1": 0.788,
+    "macro_f1": 0.7706,
+    "precision": 0.7032,
+    "recall": 0.896
+  },
+  "seed": 42,
+  "split_evaluated": "loco_held_out",
+  "stopped_early": true,
+  "test_rows": 29965,
+  "threshold": 0.44198912382125854,
+  "threshold_policy": "validation_selected_macro_f1",
+  "train_rows": 44638,
+  "validation_rows": 7878
+}

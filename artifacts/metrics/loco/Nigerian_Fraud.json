@@ -1,0 +1,29 @@
+{
+  "best_epoch": 6,
+  "commit_hash": "3fd3e332fd3c6b06487cb30d6c60f545e6a43399",
+  "confusion_matrix": {
+    "false_negatives": 55,
+    "false_positives": 0,
+    "true_negatives": 0,
+    "true_positives": 3282
+  },
+  "epochs_run": 9,
+  "held_out_corpus": "Nigerian_Fraud",
+  "metrics": {
+    "accuracy": 0.9835,
+    "auc_roc": NaN,
+    "average_precision": NaN,
+    "f1": 0.9917,
+    "macro_f1": 0.4958,
+    "precision": 1.0,
+    "recall": 0.9835
+  },
+  "seed": 42,
+  "split_evaluated": "loco_held_out",
+  "stopped_early": true,
+  "test_rows": 3337,
+  "threshold": 0.5968260765075684,
+  "threshold_policy": "validation_selected_macro_f1",
+  "train_rows": 67271,
+  "validation_rows": 11873
+}

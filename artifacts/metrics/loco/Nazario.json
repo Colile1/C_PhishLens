@@ -1,0 +1,29 @@
+{
+  "best_epoch": 4,
+  "commit_hash": "3fd3e332fd3c6b06487cb30d6c60f545e6a43399",
+  "confusion_matrix": {
+    "false_negatives": 750,
+    "false_positives": 0,
+    "true_negatives": 0,
+    "true_positives": 813
+  },
+  "epochs_run": 7,
+  "held_out_corpus": "Nazario",
+  "metrics": {
+    "accuracy": 0.5202,
+    "auc_roc": NaN,
+    "average_precision": NaN,
+    "f1": 0.6843,
+    "macro_f1": 0.3422,
+    "precision": 1.0,
+    "recall": 0.5202
+  },
+  "seed": 42,
+  "split_evaluated": "loco_held_out",
+  "stopped_early": true,
+  "test_rows": 1563,
+  "threshold": 0.6822788119316101,
+  "threshold_policy": "validation_selected_macro_f1",
+  "train_rows": 68779,
+  "validation_rows": 12139
+}
