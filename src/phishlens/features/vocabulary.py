@@ -21,8 +21,8 @@ UNK_INDEX = 1
 class Vocabulary:
     """Token-to-index map with `<pad>` at index 0 and `<unk>` at index 1.
 
-    Inputs: token_to_index — the full mapping including pad and unk;
-    pad_token, unk_token — the configured placeholder strings.
+    Inputs: token_to_index : the full mapping including pad and unk;
+    pad_token, unk_token : the configured placeholder strings.
     Output: immutable Vocabulary; `encode_token` and `size` for consumers.
     """
 
@@ -41,7 +41,7 @@ class Vocabulary:
     def encode_token(self, token: str) -> int:
         """Map a single token to its index, falling back to `<unk>`.
 
-        Inputs: token — a token as produced by tokenise().
+        Inputs: token : a token as produced by tokenise().
         Output: the token's index, or the unk index if token is out of vocabulary.
         """
         return self.token_to_index.get(token, self.token_to_index[self.unk_token])
@@ -49,7 +49,7 @@ class Vocabulary:
     def save(self, path: Path) -> None:
         """Write the vocabulary to a JSON file.
 
-        Inputs: path — destination file path.
+        Inputs: path : destination file path.
         Output: none; writes the token-to-index map and placeholder tokens.
         """
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -64,7 +64,7 @@ class Vocabulary:
     def load(path: Path) -> "Vocabulary":
         """Read a vocabulary back from a JSON file.
 
-        Inputs: path — file previously written by save().
+        Inputs: path : file previously written by save().
         Output: reconstructed Vocabulary.
 
         Raises FileNotFoundError naming the missing path.
@@ -91,8 +91,8 @@ def build_vocabulary(train_texts: list[str], config: Config) -> Vocabulary:
     `max_size` and filtered by `min_frequency`; ties in frequency are broken
     by first appearance so the result is deterministic for fixed input.
 
-    Inputs: train_texts — cleaned text column from the training split only;
-    config — validated Config supplying the vocabulary settings.
+    Inputs: train_texts : cleaned text column from the training split only;
+    config : validated Config supplying the vocabulary settings.
     Output: Vocabulary with `<pad>` at index 0 and `<unk>` at index 1,
     followed by the retained tokens in descending frequency order.
     """

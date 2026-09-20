@@ -35,11 +35,11 @@ def _title(figure_name: str, model_name: str, split_name: str) -> str:
     it describes, so a reader never has to ask what a figure is. The em-dash
     form matches the M0 figures already committed.
 
-    Inputs: figure_name — what the figure shows; model_name — the model that
-    produced it; split_name — the split it was computed on.
+    Inputs: figure_name : what the figure shows; model_name : the model that
+    produced it; split_name : the split it was computed on.
     Output: the title string.
     """
-    return f"{figure_name} — {model_name}, {split_name} split"
+    return f"{figure_name} : {model_name}, {split_name} split"
 
 
 def plot_roc(
@@ -51,8 +51,8 @@ def plot_roc(
     which is what matters, and decides for itself whether to write a
     file.
 
-    Inputs: labels — 1-D array of true 0/1 labels; probabilities — 1-D array of
-    predicted probabilities for the positive class; model_name, split_name —
+    Inputs: labels : 1-D array of true 0/1 labels; probabilities : 1-D array of
+    predicted probabilities for the positive class; model_name, split_name :
     named in the title.
     Output: the Matplotlib Figure, with axis labels, a title and a legend.
     """
@@ -78,8 +78,8 @@ def plot_precision_recall(
     More informative than ROC on an imbalanced positive class, which is why the
     brief asks for both.
 
-    Inputs: labels — 1-D array of true 0/1 labels; probabilities — 1-D array of
-    predicted probabilities for the positive class; model_name, split_name —
+    Inputs: labels : 1-D array of true 0/1 labels; probabilities : 1-D array of
+    predicted probabilities for the positive class; model_name, split_name :
     named in the title.
     Output: the Matplotlib Figure, with axis labels, a title and a legend.
     """
@@ -104,7 +104,7 @@ def plot_confusion_matrix(metrics: Metrics, model_name: str, split_name: str) ->
     one threshold, and cannot disagree. The threshold is named in the title
     because the matrix is meaningless without it.
 
-    Inputs: metrics — the Metrics whose counts to draw; model_name, split_name —
+    Inputs: metrics : the Metrics whose counts to draw; model_name, split_name :
     named in the title.
     Output: the Matplotlib Figure, with axis labels and a title.
     """
@@ -134,12 +134,12 @@ def plot_loss_curve(history: Sequence[dict[str, float]], model_name: str) -> Fig
     """Draw training and validation loss against epoch.
 
     Consumes `TrainingResult.history` from the training loop directly. Two
-    series means the legend is not optional — a single unlabelled loss curve
+    series means the legend is not optional : a single unlabelled loss curve
     cannot be read for overfitting, which is the whole reason the brief asks
     for this figure.
 
-    Inputs: history — one flat dict per epoch carrying "epoch", "train_loss"
-    and "val_loss", as the training loop produces; model_name — named in the
+    Inputs: history : one flat dict per epoch carrying "epoch", "train_loss"
+    and "val_loss", as the training loop produces; model_name : named in the
     title.
     Output: the Matplotlib Figure, with axis labels, a title and a legend.
 
@@ -168,7 +168,7 @@ def plot_loss_curve(history: Sequence[dict[str, float]], model_name: str) -> Fig
 
     axes.set_xlabel("Epoch")
     axes.set_ylabel("Loss")
-    axes.set_title(f"Loss curve — {model_name}, training and validation")
+    axes.set_title(f"Loss curve : {model_name}, training and validation")
     axes.legend()
     figure.tight_layout()
     return figure

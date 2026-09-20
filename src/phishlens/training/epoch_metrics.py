@@ -40,7 +40,7 @@ class EpochMetrics:
     def as_row(self, prefix: str) -> dict[str, float]:
         """Flatten the metrics into prefixed CSV columns.
 
-        Inputs: prefix — "train" or "val", naming the split the scores describe.
+        Inputs: prefix : "train" or "val", naming the split the scores describe.
         Output: dict of prefixed column name to value, e.g. "val_macro_f1".
         """
         return {f"{prefix}_{name}": value for name, value in asdict(self).items()}
@@ -57,9 +57,9 @@ def compute_epoch_metrics(
     hand-checked confusion matrix and its own critical test; step 10's real M1
     run reports from that module, not this one.
 
-    Inputs: labels — 1-D array of true 0/1 labels; probabilities — 1-D array
-    of predicted probabilities for the positive class; loss — the mean loss
-    over the split; threshold — probability at or above which a row is
+    Inputs: labels : 1-D array of true 0/1 labels; probabilities : 1-D array
+    of predicted probabilities for the positive class; loss : the mean loss
+    over the split; threshold : probability at or above which a row is
     predicted positive.
     Output: EpochMetrics for the split.
 

@@ -60,7 +60,7 @@ def main() -> None:
     try:
         row_counts = download_and_verify(raw_dir, config.data.corpora)
     except FileNotFoundError as error:
-        print(f"Description: download failed — {error}", file=sys.stderr)
+        print(f"Description: download failed : {error}", file=sys.stderr)
         raise
 
     for file_name, count in row_counts.items():

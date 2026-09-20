@@ -27,7 +27,7 @@ def normalise_text(text: str, config: Config) -> str:
     placeholder tokens themselves contain no URL, email or multi-digit
     pattern for a second pass to match.
 
-    Inputs: text — cleaned subject+body string; config — validated Config
+    Inputs: text : cleaned subject+body string; config : validated Config
     supplying the preprocessing switches and placeholder tokens.
     Output: the normalised string; "" for empty or non-textual input.
     """

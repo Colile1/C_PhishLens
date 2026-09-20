@@ -18,7 +18,7 @@ def positive_class_weight(labels: np.ndarray) -> torch.Tensor:
     Computed from the **training split only**. Deriving it from validation or
     test labels would leak their class balance into training.
 
-    Inputs: labels — 1-D array of 0/1 training labels.
+    Inputs: labels : 1-D array of 0/1 training labels.
     Output: a scalar float32 tensor holding negatives / positives.
 
     Raises ValueError if the array is empty or holds a single class, since no

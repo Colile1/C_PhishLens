@@ -11,10 +11,10 @@ Half of the 15 points live here, the other half in `src/desktop/`.
 
 | File | Responsibility |
 |------|----------------|
-| `app.py` | `create_app(config) -> FastAPI` — application factory. Wires routes, loads the model, vocabulary and threshold once in a startup handler. No request handling logic |
+| `app.py` | `create_app(config) -> FastAPI` : application factory. Wires routes, loads the model, vocabulary and threshold once in a startup handler. No request handling logic |
 | `routes.py` | The four endpoints. `GET /health`, `GET /metadata`, `POST /predict`, `POST /explain`. Each is a thin translation between the schema and a core call |
 | `schemas.py` | Pydantic request and response models: `PredictRequest(text)`, `PredictResponse(label, probability, threshold, model_id)`, `ExplainResponse(tokens, method, caveat)`. Validation lives here, so a bad request never reaches the core |
-| `model_service.py` | `ModelService` — holds the loaded model, vocabulary and threshold. `predict(text) -> Prediction` and `explain(text) -> list[TokenWeight]`. The single place the core is called from |
+| `model_service.py` | `ModelService` : holds the loaded model, vocabulary and threshold. `predict(text) -> Prediction` and `explain(text) -> list[TokenWeight]`. The single place the core is called from |
 | `errors.py` | Exception handlers turning core errors into responses that name the problem. No stack traces in responses |
 
 ## Endpoints
@@ -43,7 +43,7 @@ Imports `config`, `features`, `models` and `explain`. **Nothing in the core
 imports this folder.** Started by `run_api.py` at the repository root, which
 reads the config and calls `create_app`.
 
-Done when: `tests/unit/test_api.py` passes with the FastAPI `TestClient` — health
+Done when: `tests/unit/test_api.py` passes with the FastAPI `TestClient` : health
 reports the model loaded, empty text is refused with a 422 naming `text`,
 `/predict` returns a probability in [0, 1], and `/explain` returns tokens whose
 offsets index correctly into the submitted text.

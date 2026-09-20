@@ -35,7 +35,7 @@ def splits(config):
     These are the files every downstream number is computed from, so the
     guards run against them rather than against a synthetic fixture.
 
-    Inputs: config — validated Config supplying paths.processed.
+    Inputs: config : validated Config supplying paths.processed.
     Output: dict of split name to DataFrame.
 
     Skips the module if the split has not been built yet, naming the script
@@ -58,7 +58,7 @@ def splits(config):
 def pooled(splits):
     """Concatenate the three splits back into the full pool.
 
-    Inputs: splits — dict of split name to DataFrame.
+    Inputs: splits : dict of split name to DataFrame.
     Output: DataFrame of every row with a `split` column naming its origin.
     """
     tagged = []

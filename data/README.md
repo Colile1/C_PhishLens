@@ -1,7 +1,7 @@
 # data/
 
 All data, at three stages. **Nothing in this folder is committed** except the
-`.gitkeep` files — the corpora are public and reproducible with
+`.gitkeep` files : the corpora are public and reproducible with
 `scripts/download_data.py`, and committing them would bloat the repository and
 muddy the licensing position.
 

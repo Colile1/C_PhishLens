@@ -19,13 +19,13 @@ class EarlyStopping:
        not reset the counter and does not become the new best.
     2. The counter resets to zero on every improvement.
     3. `update` returns True when the number of consecutive non-improving
-       epochs reaches `patience` — that is, training stops after exactly
+       epochs reaches `patience` : that is, training stops after exactly
        `patience` epochs without improvement.
 
-    Inputs: metric — the name of the watched metric, carried for reporting;
-    mode — "max" for metrics where higher is better (macro-F1), "min" for
-    metrics where lower is better (loss); patience — consecutive
-    non-improving epochs tolerated; min_delta — smallest change counted as an
+    Inputs: metric : the name of the watched metric, carried for reporting;
+    mode : "max" for metrics where higher is better (macro-F1), "min" for
+    metrics where lower is better (loss); patience : consecutive
+    non-improving epochs tolerated; min_delta : smallest change counted as an
     improvement.
     Output: a stateful tracker; `update` reports whether to stop, and
     `best_epoch` / `best_score` describe the epoch to restore.
@@ -60,7 +60,7 @@ class EarlyStopping:
         and the best-epoch record must come from this one rule, or the file on
         disk could stop matching the epoch reported as best.
 
-        Inputs: score — the current epoch's validation score.
+        Inputs: score : the current epoch's validation score.
         Output: True if this is an improvement under the configured mode.
         """
         if self.best_score is None:
@@ -72,7 +72,7 @@ class EarlyStopping:
     def update(self, score: float) -> bool:
         """Record one epoch's score and report whether training should stop.
 
-        Inputs: score — the validation score for the epoch just finished.
+        Inputs: score : the validation score for the epoch just finished.
         Output: True if `patience` consecutive epochs have passed without an
         improvement, meaning the loop should stop.
         """

@@ -11,7 +11,7 @@
 # ---
 
 # %% [markdown]
-# # 03 — Train M1 (Text-CNN)
+# # 03 : Train M1 (Text-CNN)
 #
 # Purpose: build the training vocabulary, train the Text-CNN with the
 # explicit patience-based early-stopping loop, and show the training curve
@@ -57,7 +57,7 @@ print(f"Run date: {datetime.now().isoformat(timespec='seconds')}")
 # %% [markdown]
 # ## Load the training and validation splits
 #
-# `test.csv` is never read here — see the invariant above.
+# `test.csv` is never read here : see the invariant above.
 
 # %%
 processed_dir = Path(config.paths.processed)
@@ -74,7 +74,7 @@ print(f"Validation positive rate: {validation_df[label_column].mean():.4f}")
 # %% [markdown]
 # ## Build the vocabulary
 #
-# Fitted on training text only — see `src/phishlens/features/vocabulary.py`.
+# Fitted on training text only : see `src/phishlens/features/vocabulary.py`.
 # Saved so `04_evaluate.ipynb` and the serving layer encode with the exact
 # same mapping.
 
@@ -157,7 +157,7 @@ figure.show()
 # %% [markdown]
 # ## Per-epoch metric table
 #
-# One row per epoch, all train/validation columns — the evidence for the
+# One row per epoch, all train/validation columns : the evidence for the
 # per-iteration metric-logging marks. Backed by
 # `artifacts/metrics/training_log.csv`, rewritten every epoch.
 

@@ -1,5 +1,5 @@
 # test_features.py
-# Purpose: unit tests for the feature layer — normaliser, vectoriser, vocabulary, encoder.
+# Purpose: unit tests for the feature layer : normaliser, vectoriser, vocabulary, encoder.
 # Author: Colile Sibanda
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ def test_vectoriser_fitted_on_train_only() -> None:
     vectoriser = fit_tfidf(train_texts, CONFIG)
 
     # A token that appears only in "validation" text, never in train, must
-    # not appear in the fitted vocabulary — the signature makes misuse
+    # not appear in the fitted vocabulary : the signature makes misuse
     # awkward, but this proves the fit itself never saw held-out text.
     assert "quarterly" not in vectoriser.vocabulary_
 

@@ -15,8 +15,8 @@ from phishlens.features.vocabulary import PAD_INDEX, Vocabulary
 def encode(texts: list[str], vocabulary: Vocabulary, config: Config) -> np.ndarray:
     """Encode texts into padded, truncated integer sequences.
 
-    Inputs: texts — cleaned text strings, from any split; vocabulary —
-    Vocabulary built on training text only; config — validated Config
+    Inputs: texts : cleaned text strings, from any split; vocabulary :
+    Vocabulary built on training text only; config : validated Config
     supplying `max_sequence_length`.
     Output: int64 array of shape (len(texts), max_sequence_length). Sequences
     shorter than max_sequence_length are right-padded with `<pad>` (index 0);

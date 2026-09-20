@@ -11,7 +11,7 @@
 # ---
 
 # %% [markdown]
-# # 02 — Baseline (M0: TF-IDF + Logistic Regression)
+# # 02 : Baseline (M0: TF-IDF + Logistic Regression)
 #
 # Purpose: train the M0 baseline on the training split, evaluate it on the
 # validation split, and report the full metric set with ROC, precision-recall
@@ -66,7 +66,7 @@ print(f"Run date: {datetime.now().isoformat(timespec='seconds')}")
 # %% [markdown]
 # ## Load the training and validation splits
 #
-# `test.csv` is never read here — see the invariant above.
+# `test.csv` is never read here : see the invariant above.
 
 # %%
 processed_dir = Path(config.paths.processed)
@@ -85,7 +85,7 @@ print(f"Validation positive rate: {validation_df[label_column].mean():.4f}")
 # ## Train M0
 #
 # TF-IDF fit on the training split only, into a class-weighted Logistic
-# Regression. `build_baseline` is a factory — see `src/phishlens/models/baseline.py`.
+# Regression. `build_baseline` is a factory : see `src/phishlens/models/baseline.py`.
 
 # %%
 pipeline = build_baseline(config)
@@ -133,7 +133,7 @@ metrics_table
 # %%
 fig, ax = plt.subplots(figsize=(6, 5))
 RocCurveDisplay.from_predictions(y_true, y_prob, ax=ax, name="M0 (TF-IDF + LogReg)")
-ax.set_title("ROC curve — M0 baseline, validation split")
+ax.set_title("ROC curve : M0 baseline, validation split")
 ax.plot([0, 1], [0, 1], linestyle="--", color="grey", label="Chance")
 ax.legend()
 fig.tight_layout()
@@ -147,7 +147,7 @@ fig, ax = plt.subplots(figsize=(6, 5))
 PrecisionRecallDisplay.from_predictions(
     y_true, y_prob, ax=ax, name="M0 (TF-IDF + LogReg)"
 )
-ax.set_title("Precision-recall curve — M0 baseline, validation split")
+ax.set_title("Precision-recall curve : M0 baseline, validation split")
 fig.tight_layout()
 pr_path = Path(config.paths.figures) / "m0_precision_recall_curve.png"
 fig.savefig(pr_path, dpi=config.evaluation.figure_dpi)
@@ -159,7 +159,7 @@ cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
 ConfusionMatrixDisplay(cm, display_labels=["legitimate", "phishing"]).plot(
     ax=ax, cmap="Blues", colorbar=False
 )
-ax.set_title(f"Confusion matrix — M0 baseline, threshold={threshold}")
+ax.set_title(f"Confusion matrix : M0 baseline, threshold={threshold}")
 fig.tight_layout()
 cm_path = Path(config.paths.figures) / "m0_confusion_matrix.png"
 fig.savefig(cm_path, dpi=config.evaluation.figure_dpi)

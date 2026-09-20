@@ -17,9 +17,9 @@ def tokenise(text: str) -> list[str]:
 
     A simple pattern-based tokeniser, chosen over a library tokeniser so the
     tokens a LIME explanation reports are exactly the tokens the model saw at
-    encode time — no hidden subword splitting or stemming in between.
+    encode time : no hidden subword splitting or stemming in between.
 
-    Inputs: text — normalised string (see normalise_text).
+    Inputs: text : normalised string (see normalise_text).
     Output: list of tokens in order; [] for empty or non-textual input.
     """
     if not isinstance(text, str) or not text:

@@ -116,7 +116,7 @@ def test_confusion_matrix_counts_match_the_hand_worked_case(hand_metrics) -> Non
 
 
 def test_precision_recall_and_f1_match_hand_computed_values(hand_metrics) -> None:
-    """Precision 0.6, recall 0.75, F1 2/3 — to six decimal places.
+    """Precision 0.6, recall 0.75, F1 2/3 : to six decimal places.
 
     The three differ from each other, so this fails if precision and recall are
     transposed, which a symmetric fixture could not detect.
@@ -179,7 +179,7 @@ def test_metrics_describe_label_one_not_label_zero(hand_metrics) -> None:
     This is the assertion with teeth. On the hand-worked case label 1 scores
     precision 0.6 / recall 0.75 while label 0 scores precision 0.8 / recall
     2/3. If the positive class were flipped, every value below would still look
-    entirely plausible — and every phishing number in the report would describe
+    entirely plausible : and every phishing number in the report would describe
     the legitimate class instead.
     """
     label_zero_precision = 4 / 5
@@ -187,7 +187,7 @@ def test_metrics_describe_label_one_not_label_zero(hand_metrics) -> None:
 
     assert hand_metrics.precision == pytest.approx(0.6, abs=TOLERANCE), (
         f"Precision is {hand_metrics.precision:.6f}. The label-1 value is 0.6 and "
-        f"the label-0 value is {label_zero_precision:.6f} — this reads as the "
+        f"the label-0 value is {label_zero_precision:.6f} : this reads as the "
         f"wrong class."
     )
     assert hand_metrics.precision != pytest.approx(label_zero_precision, abs=TOLERANCE)
@@ -255,7 +255,7 @@ def test_raising_the_threshold_trades_recall_for_precision() -> None:
     positives (precision 4/7). At 0.95 only the top-ranked row is predicted
     positive: precision 1.0, recall 0.25.
 
-    Note the trade is not monotonic on this fixture — at 0.85 precision is 0.5,
+    Note the trade is not monotonic on this fixture : at 0.85 precision is 0.5,
     *below* the 0.25 value, because the highest-scoring row overall is a
     negative (.90) and it survives into a much smaller positive set. That is a
     real property of the data, not a defect, and it is why a threshold is
@@ -499,7 +499,7 @@ def test_save_metrics_refuses_a_context_that_contradicts_the_scores(
 
 
 def test_commit_hash_returns_a_sha_or_the_sentinel() -> None:
-    """Either a real commit, or "unknown" outside a repository — never a crash."""
+    """Either a real commit, or "unknown" outside a repository : never a crash."""
     value = commit_hash()
 
     assert value == UNKNOWN_COMMIT or (len(value) == 40 and value.isalnum())

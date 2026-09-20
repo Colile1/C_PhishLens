@@ -55,8 +55,8 @@ def _run_epoch(
     weights in train mode; without one, it evaluates under no_grad in eval
     mode, so dropout is disabled.
 
-    Inputs: model — the module; loader — batches of (sequences, labels);
-    loss_function — BCEWithLogitsLoss; device — where to run; optimiser — the
+    Inputs: model : the module; loader : batches of (sequences, labels);
+    loss_function : BCEWithLogitsLoss; device : where to run; optimiser : the
     optimiser for a training pass, or None for an evaluation pass.
     Output: (labels, probabilities, mean_loss) for the whole pass.
     """
@@ -103,7 +103,7 @@ def _write_history(history: list[dict[str, float]], path: Path) -> None:
     is rewritten after every epoch rather than only at the end: a run that
     crashes mid-training still leaves the epochs it completed.
 
-    Inputs: history — list of flat per-epoch dicts; path — destination CSV.
+    Inputs: history : list of flat per-epoch dicts; path : destination CSV.
     Output: none; writes the CSV with a header row.
     """
     if not history:
@@ -136,20 +136,20 @@ def train(
 
     The behaviour that has to be exactly right:
 
-    1. Patience watches `training.early_stopping.metric` — validation
+    1. Patience watches `training.early_stopping.metric` : validation
        macro-F1, not loss. Loss and F1 disagree on imbalanced data and the
        report is written about F1.
     2. A checkpoint is written on every improvement, so the file on disk
        always holds the best epoch's weights.
-    3. However the loop ends — early stop or max_epochs — the model carries
+    3. However the loop ends : early stop or max_epochs : the model carries
        the best epoch's weights before this function returns. The test set
        never sees the last epoch unless the last epoch was the best.
 
-    Inputs: model — an unfitted TextCNN; train_loader, val_loader — loaders
-    from batching.make_loader; config — validated Config; positive_weight —
+    Inputs: model : an unfitted TextCNN; train_loader, val_loader : loaders
+    from batching.make_loader; config : validated Config; positive_weight :
     pos_weight for BCEWithLogitsLoss from weighting.positive_class_weight,
-    applied only when `training.class_weighting` is set; device — where to
-    train, defaulting to CUDA when available; verbose — whether to print a
+    applied only when `training.class_weighting` is set; device : where to
+    train, defaulting to CUDA when available; verbose : whether to print a
     line per epoch.
     Output: TrainingResult naming the restored epoch and carrying the history.
 

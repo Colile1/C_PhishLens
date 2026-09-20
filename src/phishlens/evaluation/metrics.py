@@ -74,7 +74,7 @@ class Metrics:
         """Return the metric scores alone, without the threshold or the counts.
 
         This is what `persistence.save_metrics` nests under "metrics" and what
-        `reporting.metrics_table` renders as a row, so it holds scores only —
+        `reporting.metrics_table` renders as a row, so it holds scores only :
         the counts are integers describing the matrix, not scores to compare
         between models.
 
@@ -101,7 +101,7 @@ def _check_arrays(labels: np.ndarray, probabilities: np.ndarray) -> tuple[np.nda
     `pos_label=1` select the wrong class, or select nothing, and still return
     a plausible-looking number.
 
-    Inputs: labels — 1-D array of true labels; probabilities — 1-D array of
+    Inputs: labels : 1-D array of true labels; probabilities : 1-D array of
     predicted probabilities for the positive class.
     Output: (labels, probabilities) as numpy arrays.
 
@@ -136,12 +136,12 @@ def compute_metrics(
     Takes probabilities rather than hard labels so AUC-ROC and average
     precision are computable and the threshold stays visible in the signature.
     A row is predicted positive when its probability is at or above the
-    threshold, matching training/epoch_metrics.py — `>` instead of `>=` would
+    threshold, matching training/epoch_metrics.py : `>` instead of `>=` would
     move every boundary case by one row.
 
-    Inputs: labels — 1-D array of true 0/1 labels; probabilities — 1-D array of
+    Inputs: labels : 1-D array of true 0/1 labels; probabilities : 1-D array of
     predicted probabilities for the positive class (for a sklearn classifier
-    that is `predict_proba(...)[:, 1]`, not column 0); threshold — probability
+    that is `predict_proba(...)[:, 1]`, not column 0); threshold : probability
     at or above which a row is predicted positive.
     Output: Metrics for the split, carrying the threshold used.
 
@@ -203,8 +203,8 @@ def select_threshold(
     many thresholds that produce identical predictions while missing the ones
     that matter.
 
-    Inputs: labels — 1-D array of true 0/1 labels; probabilities — 1-D array of
-    predicted probabilities for the positive class; objective — "macro_f1" or
+    Inputs: labels : 1-D array of true 0/1 labels; probabilities : 1-D array of
+    predicted probabilities for the positive class; objective : "macro_f1" or
     "f1", the score to maximise.
     Output: the threshold maximising the objective. Ties resolve to the lowest
     such threshold, which is the higher-recall choice.

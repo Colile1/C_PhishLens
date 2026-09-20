@@ -27,7 +27,7 @@ DISPLAY_PRECISION = 4
 def _frame(results: dict[str, Metrics], index_name: str) -> pd.DataFrame:
     """Build a metrics DataFrame from a name-to-Metrics mapping.
 
-    Inputs: results — mapping of row name to its Metrics; index_name — what the
+    Inputs: results : mapping of row name to its Metrics; index_name : what the
     index column is called, "model" or "corpus".
     Output: DataFrame indexed by name, one column per metric in TABLE_COLUMNS.
 
@@ -51,10 +51,10 @@ def _frame(results: dict[str, Metrics], index_name: str) -> pd.DataFrame:
 def metrics_table(results: dict[str, Metrics]) -> pd.DataFrame:
     """Tabulate several models side by side for the M0 vs M1 comparison.
 
-    Formatting only — every value comes from an already-computed Metrics, so
+    Formatting only : every value comes from an already-computed Metrics, so
     this cannot introduce a number that was not measured.
 
-    Inputs: results — mapping of model name to its Metrics, e.g.
+    Inputs: results : mapping of model name to its Metrics, e.g.
     {"M0 TF-IDF + LogReg": ..., "M1 Text-CNN": ...}.
     Output: DataFrame indexed by model name, one column per metric.
 
@@ -70,7 +70,7 @@ def per_corpus_table(results: dict[str, Metrics]) -> pd.DataFrame:
     leave-one-corpus-out results and the per-corpus breakdown
     at step 10 line up row for row in the report.
 
-    Inputs: results — mapping of corpus name to that corpus's Metrics.
+    Inputs: results : mapping of corpus name to that corpus's Metrics.
     Output: DataFrame indexed by corpus name, sorted by name for a stable
     reading order, one column per metric.
 

@@ -39,7 +39,7 @@ class SplitIndex:
     def groups_for(self, split_name: str) -> frozenset[str]:
         """Return the group ids assigned to one split.
 
-        Inputs: split_name — one of train, validation, test.
+        Inputs: split_name : one of train, validation, test.
         Output: frozenset of content-hash group ids.
 
         Raises ValueError naming the valid split names for anything else.
@@ -66,11 +66,11 @@ class SplitIndex:
     def apply(self, frame: pd.DataFrame) -> pd.DataFrame:
         """Attach a `split` column to a frame carrying `content_hash`.
 
-        Inputs: frame — frame with a `content_hash` column.
+        Inputs: frame : frame with a `content_hash` column.
         Output: a copy with a `split` column naming each row's split.
 
         Raises KeyError if `content_hash` is absent, and ValueError if the
-        frame contains a group the index does not cover — that means the
+        frame contains a group the index does not cover : that means the
         frame and the split were built from different data.
         """
         if "content_hash" not in frame.columns:
@@ -98,7 +98,7 @@ def config_hash(config: Config) -> str:
     (a learning rate, a plot DPI) does not invalidate a split that is still
     correct.
 
-    Inputs: config — validated Config.
+    Inputs: config : validated Config.
     Output: a 16-character hexadecimal digest.
     """
     material = json.dumps(
@@ -128,7 +128,7 @@ def _group_table(frame: pd.DataFrame, label_column: str) -> pd.DataFrame:
     which is what stratification can act on, since a group is indivisible and
     may hold both labels.
 
-    Inputs: frame — frame with `content_hash` and the label column.
+    Inputs: frame : frame with `content_hash` and the label column.
     Output: DataFrame indexed by group id with columns size and stratum,
     sorted by group id so the order never depends on input row order.
     """
@@ -163,8 +163,8 @@ def _assign_stratum(
     splits. Ties are broken by a seeded draw rather than by split name, so no
     split is silently favoured by alphabetical order.
 
-    Inputs: group_ids and sizes — parallel arrays for one stratum; ratios —
-    split name to target proportion; rng — seeded generator.
+    Inputs: group_ids and sizes : parallel arrays for one stratum; ratios :
+    split name to target proportion; rng : seeded generator.
     Output: dict of split name to the list of group ids assigned to it.
     """
     order = rng.permutation(len(group_ids))
@@ -217,8 +217,8 @@ def make_split(frame: pd.DataFrame, config: Config) -> SplitIndex:
     each split. The draw depends only on the config seed and the set of
     groups, never on row order.
 
-    Inputs: frame — cleaned frame carrying `content_hash` and the label
-    column; config — validated Config supplying the seed and the ratios.
+    Inputs: frame : cleaned frame carrying `content_hash` and the label
+    column; config : validated Config supplying the seed and the ratios.
     Output: SplitIndex with the three group sets and a manifest recording the
     seed, the config hash and the realised proportions.
 
@@ -299,8 +299,8 @@ def write_split(split: SplitIndex, frame: pd.DataFrame, config: Config) -> None:
     ids are sorted before writing so the files reproduce byte for byte from
     the same seed regardless of dictionary or set iteration order.
 
-    Inputs: split — the SplitIndex; frame — the cleaned, grouped frame;
-    config — validated Config supplying the output directory.
+    Inputs: split : the SplitIndex; frame : the cleaned, grouped frame;
+    config : validated Config supplying the output directory.
     Output: none; writes train.csv, validation.csv, test.csv and
     split_manifest.json.
     """
@@ -328,7 +328,7 @@ def write_split(split: SplitIndex, frame: pd.DataFrame, config: Config) -> None:
 def load_split(config: Config) -> SplitIndex:
     """Read a previously written split back from `paths.processed`.
 
-    Inputs: config — validated Config supplying the directory.
+    Inputs: config : validated Config supplying the directory.
     Output: SplitIndex reconstructed from the split files and manifest.
 
     Raises FileNotFoundError naming the missing file and the step that

@@ -47,7 +47,7 @@ def split_frames(config):
     once-only test-set budget: the probe predicts `corpus`, never `label`,
     and no modelling decision is taken from its result.
 
-    Inputs: config — validated Config supplying paths.processed.
+    Inputs: config : validated Config supplying paths.processed.
     Output: dict of split name to DataFrame.
 
     Skips the module if the split has not been built yet.
@@ -74,7 +74,7 @@ def probe_result(config, split_frames):
     model family as the M0 baseline: whatever signal this probe finds, M0 can
     find too.
 
-    Inputs: config — validated Config supplying the seed; split_frames — the
+    Inputs: config : validated Config supplying the seed; split_frames : the
     train and test frames.
     Output: dict of accuracy, per-corpus F1, macro F1 and the row counts.
     """

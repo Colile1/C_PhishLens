@@ -26,13 +26,13 @@ def make_loco_index(frame: pd.DataFrame) -> dict[str, LocoFold]:
     """Build one train/test fold per source corpus.
 
     The held-out corpus is the test side and the other five are the train
-    side. Groups that appear in both — the same email content present in two
-    corpora, which the pooled corpora do contain — are removed from the train
+    side. Groups that appear in both : the same email content present in two
+    corpora, which the pooled corpora do contain : are removed from the train
     side, so the held-out corpus stays genuinely unseen. Without that removal
     LOCO would quietly measure the same leakage the random split is guarded
     against, and the gap between the two would be meaningless.
 
-    Inputs: frame — cleaned frame carrying `content_hash` and `corpus`.
+    Inputs: frame : cleaned frame carrying `content_hash` and `corpus`.
     Output: dict of corpus name to LocoFold, ordered by corpus name.
 
     Raises KeyError naming any required column that is absent.
@@ -62,8 +62,8 @@ def loco_report(
 ) -> pd.DataFrame:
     """Summarise the size and class balance of each leave-one-corpus-out fold.
 
-    Inputs: frame — the frame the folds were built from; folds — output of
-    `make_loco_index`; label_column — the label column name from config.
+    Inputs: frame : the frame the folds were built from; folds : output of
+    `make_loco_index`; label_column : the label column name from config.
     Output: DataFrame indexed by held-out corpus with train/test row counts,
     the test-side positive rate, and the count of groups shared with the
     train side before removal.

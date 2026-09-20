@@ -1,6 +1,6 @@
 # src/desktop/
 
-The Tkinter desktop application — 15 of the 70 points, together with
+The Tkinter desktop application : 15 of the 70 points, together with
 the API it talks to. This is the presentation layer and holds no model logic at
 all: it sends text to the FastAPI service and renders what comes back.
 
@@ -11,9 +11,9 @@ it works, and lets the model be tested without a GUI.
 
 | File | Responsibility |
 |------|----------------|
-| `app.py` | `PhishLensApp(api_base_url: str)` — builds the window: input text area, Analyse button, verdict panel, explanation panel, status bar. Holds no analysis logic |
-| `api_client.py` | `predict(text: str) -> Prediction` and `explain(text: str) -> list[TokenWeight]` — HTTP calls to the service, with timeouts, and errors translated into readable messages. The only file in this folder that knows the API exists |
-| `highlight.py` | `render_attributions(widget, text: str, weights: list[TokenWeight]) -> None` — paints token backgrounds by attribution sign and magnitude in a Tkinter `Text` widget. Pure rendering, no HTTP |
+| `app.py` | `PhishLensApp(api_base_url: str)` : builds the window: input text area, Analyse button, verdict panel, explanation panel, status bar. Holds no analysis logic |
+| `api_client.py` | `predict(text: str) -> Prediction` and `explain(text: str) -> list[TokenWeight]` : HTTP calls to the service, with timeouts, and errors translated into readable messages. The only file in this folder that knows the API exists |
+| `highlight.py` | `render_attributions(widget, text: str, weights: list[TokenWeight]) -> None` : paints token backgrounds by attribution sign and magnitude in a Tkinter `Text` widget. Pure rendering, no HTTP |
 | `messages.py` | User-facing strings in one place: verdict wording, error text, the caution line that the model is an aid and not a decision |
 
 ## Behaviour it must get right
@@ -30,7 +30,7 @@ it works, and lets the model be tested without a GUI.
 ## Integration
 
 Depends on `requests` and on the running API. Must **not** import
-`src/phishlens/models`, `training`, or `data` — if this folder can import the
+`src/phishlens/models`, `training`, or `data` : if this folder can import the
 model, the layering has failed and the app can no longer be demonstrated
 against a hosted service.
 

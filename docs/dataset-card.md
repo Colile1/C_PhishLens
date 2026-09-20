@@ -1,4 +1,4 @@
-# Dataset card — C_PhishLens
+# Dataset card : C_PhishLens
 
 Written. Author: Colile Sibanda. Produced from
 `notebooks/01_data_audit.ipynb`; regenerate this file's numbers from that
@@ -10,7 +10,7 @@ Kaggle: [`naserabdullahalam/phishing-email-dataset`](https://www.kaggle.com/data
 
 Downloaded with `scripts/download_data.py` (wraps the Kaggle API,
 `kaggle.api.kaggle_api_extended.KaggleApi`) into `data/raw/`, which is
-git-ignored — the corpora are public and reproducible from this link, so they
+git-ignored : the corpora are public and reproducible from this link, so they
 are not committed to the repository.
 
 
@@ -50,7 +50,7 @@ Pooled row count: **82,486** across six corpora, before cleaning or splitting
 | SpamAssassin | 4,091 | 1,718 | 5,809 | 0.296 |
 
 **Key finding:** Nazario and Nigerian Fraud contribute **only** positive
-(phishing/spam) examples — neither corpus has a single legitimate row. This
+(phishing/spam) examples : neither corpus has a single legitimate row. This
 is the evidence behind the the question decision below and the reason the corpus probe
  and leave-one-corpus-out evaluation exist: a
 model could learn "this email came from the Nazario or Nigerian Fraud corpus"
@@ -63,7 +63,7 @@ phishing signal.
 - Rows with combined subject+body text shorter than `data.min_characters`
   (10 characters, `configs/default.yaml`): 3
 - Total corrupted or empty rows (union of the two conditions): **4** out of
-  82,486 — negligible, dropped's cleaning stage.
+  82,486 : negligible, dropped's cleaning stage.
 
 ## Duplicate rate
 
@@ -91,10 +91,10 @@ notebook; see `artifacts/figures/01_text_length_distribution.png`):
 | SpamAssassin | 2,445 | 1,123 | 35 | 299,272 |
 
 Nazario's maximum (4.6M characters) is a strong outlier against its own
-median (766) — worth a targeted check's cleaning stage in
+median (766) : worth a targeted check's cleaning stage in
 case it is a single malformed row rather than a genuinely long email.
 
-## the question — resolved
+## the question : resolved
 
 **Question:** frame the task as "phishing/spam vs legitimate" (honest to the
 labels present in the pooled corpus), or restrict positives to Nazario +
@@ -104,8 +104,8 @@ positive class with exactly two source corpora)?
 **Decision:** phishing/spam vs legitimate, using the labels as provided
 the full reasoning; the short version is that restricting positives to
 Nazario + Nigerian Fraud would tie the entire positive class to two corpora
-and the entire negative class to four different ones — precisely the
-corpus/label confound this project exists to guard against — while also
+and the entire negative class to four different ones : precisely the
+corpus/label confound this project exists to guard against : while also
 discarding the great majority of labelled positive examples (tens of
 thousands of CEAS-08 and Enron rows).
 

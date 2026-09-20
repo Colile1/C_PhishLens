@@ -1,5 +1,5 @@
 # text_cnn.py
-# Purpose: the M1 Text-CNN architecture — embedding, parallel convolutions, one logit.
+# Purpose: the M1 Text-CNN architecture : embedding, parallel convolutions, one logit.
 # Author: Colile Sibanda
 
 from __future__ import annotations
@@ -25,9 +25,9 @@ class TextCNN(nn.Module):
     over two classes: numerically steadier, and it keeps the decision
     threshold explicit rather than hidden inside an argmax.
 
-    Inputs: vocab_size — number of vocabulary entries including pad and unk;
-    embedding_dim — embedding width; filter_sizes — convolution widths;
-    filters_per_size — feature maps per width; dropout — dropout probability
+    Inputs: vocab_size : number of vocabulary entries including pad and unk;
+    embedding_dim : embedding width; filter_sizes : convolution widths;
+    filters_per_size : feature maps per width; dropout : dropout probability
     applied to the pooled features.
     Output: an unfitted nn.Module; forward() returns logits of shape (batch,).
 
@@ -73,7 +73,7 @@ class TextCNN(nn.Module):
     def forward(self, token_ids: torch.Tensor) -> torch.Tensor:
         """Run a forward pass and return one logit per input sequence.
 
-        Inputs: token_ids — int64 tensor of shape (batch, sequence_length),
+        Inputs: token_ids : int64 tensor of shape (batch, sequence_length),
         as produced by features.encoder.encode.
         Output: float tensor of shape (batch,) holding raw logits. Apply
         torch.sigmoid to obtain probabilities; the loss function does this
@@ -108,8 +108,8 @@ class TextCNN(nn.Module):
 def build_text_cnn(vocab_size: int, config: Config) -> TextCNN:
     """Build a TextCNN from the validated config.
 
-    Inputs: vocab_size — size of the vocabulary built on training text only;
-    config — validated Config supplying the model section.
+    Inputs: vocab_size : size of the vocabulary built on training text only;
+    config : validated Config supplying the model section.
     Output: an unfitted TextCNN on the CPU. Callers move it to a device.
     """
     settings = config.model
@@ -125,7 +125,7 @@ def build_text_cnn(vocab_size: int, config: Config) -> TextCNN:
 def count_parameters(model: nn.Module) -> int:
     """Count trainable parameters, for the architecture table in report 3.2.
 
-    Inputs: model — any module.
+    Inputs: model : any module.
     Output: number of parameters with requires_grad set.
     """
     return sum(parameter.numel() for parameter in model.parameters() if parameter.requires_grad)

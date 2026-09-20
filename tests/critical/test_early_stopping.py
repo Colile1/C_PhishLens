@@ -145,7 +145,7 @@ class _ScriptedModel(nn.Module):
     The `marker` parameter carries the epoch number at the time weights were
     saved, so the restored model can be asked which epoch it came from.
 
-    Inputs: scores — one accuracy target per epoch, in order.
+    Inputs: scores : one accuracy target per epoch, in order.
     Output: a module usable by train(); `marker` identifies the epoch.
     """
 
@@ -164,7 +164,7 @@ class _ScriptedModel(nn.Module):
         passes call train(False) and must not advance it, or the epoch the
         score belongs to would drift.
 
-        Inputs: mode — True for a training pass, False for evaluation.
+        Inputs: mode : True for a training pass, False for evaluation.
         Output: self, matching nn.Module.train.
         """
         if mode and self._started:
@@ -174,7 +174,7 @@ class _ScriptedModel(nn.Module):
         # epoch 6 are genuinely different tensors. Without this the model's
         # only parameter never moves, best and last weights are identical,
         # and the restore assertion below would pass even with restore_best
-        # deleted — a guard that cannot fail.
+        # deleted : a guard that cannot fail.
         with torch.no_grad():
             self.marker.fill_(float(self.epoch + 1))
         return super().train(mode)
@@ -199,7 +199,7 @@ class _ScriptedModel(nn.Module):
 def _scripted_loaders(config):
     """Build a tiny two-class dataset whose first token encodes the label.
 
-    Inputs: config — Config supplying batch size and max sequence length.
+    Inputs: config : Config supplying batch size and max sequence length.
     Output: (loader, labels) with the label recoverable from token 0.
     """
     rows, length = 16, config.features.max_sequence_length
@@ -214,7 +214,7 @@ def _scripted_loaders(config):
 def _tiny_config(tmp_path: Path, max_epochs: int, patience: int):
     """Point paths at tmp_path and set a small epoch budget.
 
-    Inputs: tmp_path — pytest temp directory; max_epochs, patience — loop limits.
+    Inputs: tmp_path : pytest temp directory; max_epochs, patience : loop limits.
     Output: a Config writing its checkpoint and CSV under tmp_path.
     """
     paths = replace(
@@ -235,10 +235,10 @@ def worsening_run(tmp_path: Path):
     """Run the loop on a score sequence that peaks at epoch 3 then worsens.
 
     Scores improve for three epochs, then fall for the rest. With patience 3
-    the run must stop at epoch 6 — three non-improving epochs after the peak
-    — and must return the epoch-3 weights.
+    the run must stop at epoch 6 : three non-improving epochs after the peak
+    : and must return the epoch-3 weights.
 
-    Inputs: tmp_path — pytest temp directory.
+    Inputs: tmp_path : pytest temp directory.
     Output: (TrainingResult, config, model) for the assertions below.
     """
     config = _tiny_config(tmp_path, max_epochs=20, patience=3)
@@ -274,7 +274,7 @@ def test_loop_stops_after_exactly_patience_epochs(worsening_run) -> None:
         f"{result.best_epoch + patience}."
     )
     assert result.epochs_run < config.training.max_epochs, (
-        "Early stopping did not fire — the loop ran to max_epochs."
+        "Early stopping did not fire : the loop ran to max_epochs."
     )
 
 

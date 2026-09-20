@@ -4,9 +4,9 @@ Generated outputs. Split by whether the report quotes them.
 
 | Subfolder | Contents | Committed |
 |-----------|----------|-----------|
-| `models/` | Trained weights: `text_cnn_best.pt`, the fitted TF-IDF vectoriser, the vocabulary | No — rebuilt from the notebooks |
-| `figures/` | Saved copies of the ROC, precision–recall, confusion matrix and loss curves | No — they also live inline in the notebooks, which is what the reader reads |
-| `metrics/` | Per-epoch metric CSVs, final metric JSON per model, `corpus_probe.json`, the LOCO table | **Yes** — the report quotes these numbers, so they are versioned alongside the commit that produced them |
+| `models/` | Trained weights: `text_cnn_best.pt`, the fitted TF-IDF vectoriser, the vocabulary | No : rebuilt from the notebooks |
+| `figures/` | Saved copies of the ROC, precision–recall, confusion matrix and loss curves | No : they also live inline in the notebooks, which is what the reader reads |
+| `metrics/` | Per-epoch metric CSVs, final metric JSON per model, `corpus_probe.json`, the LOCO table | **Yes** : the report quotes these numbers, so they are versioned alongside the commit that produced them |
 
 ## Rules
 

@@ -57,7 +57,7 @@ def _synthetic_frame() -> pd.DataFrame:
             rows.append(
                 {
                     "subject": f"Your {topic} notice",
-                    # Only the digits change between copies of a family —
+                    # Only the digits change between copies of a family :
                     # exactly what the hash must ignore.
                     "body": f"Regarding your {topic} record {copy * 17}, "
                     f"reference {copy} is ready. Please confirm now.",

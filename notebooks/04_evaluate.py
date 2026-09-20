@@ -11,7 +11,7 @@
 # ---
 
 # %% [markdown]
-# # 04 — Evaluate on the test set (once)
+# # 04 : Evaluate on the test set (once)
 #
 # Purpose: the one and only place `test.csv` is opened. Evaluates M0 and
 # M1 on test, reports the four required figures, the M0 vs M1 comparison
@@ -19,7 +19,7 @@
 # threshold, the per-corpus breakdown for M1, and the false-positive
 # review. Author: Colile Sibanda.
 #
-# **Test-set invariant:** no threshold is chosen here — `select_threshold`
+# **Test-set invariant:** no threshold is chosen here : `select_threshold`
 # runs on `validation.csv` only, then is applied unchanged to test.
 
 # %%
@@ -88,7 +88,7 @@ print(f"Test positive rate: {test_df[label_column].mean():.4f}")
 # %% [markdown]
 # ## Rebuild M1 and restore the best checkpoint
 #
-# The vocabulary and weights come from `03_train_cnn.ipynb` — this notebook
+# The vocabulary and weights come from `03_train_cnn.ipynb` : this notebook
 # does not retrain.
 
 # %%
@@ -105,7 +105,7 @@ print(f"Restored checkpoint: {checkpoint_path}")
 def predict_m1(texts: list[str]) -> np.ndarray:
     """Encode texts and return M1 probabilities from the restored model.
 
-    Inputs: texts — cleaned text strings from any split.
+    Inputs: texts : cleaned text strings from any split.
     Output: 1-D numpy array of sigmoid probabilities for the positive class.
     """
     sequences = encode(texts, vocabulary, config)
@@ -163,7 +163,7 @@ m0_metrics_selected = compute_metrics(test_labels, m0_test_probabilities, m0_sel
 m1_metrics_selected = compute_metrics(test_labels, m1_test_probabilities, m1_selected_threshold)
 
 # %% [markdown]
-# ## M0 vs M1 comparison — untuned threshold (0.5)
+# ## M0 vs M1 comparison : untuned threshold (0.5)
 
 # %%
 metrics_table(
@@ -174,7 +174,7 @@ metrics_table(
 )
 
 # %% [markdown]
-# ## M0 vs M1 comparison — validation-selected threshold
+# ## M0 vs M1 comparison : validation-selected threshold
 
 # %%
 metrics_table(
@@ -229,7 +229,7 @@ per_corpus_table(per_corpus_metrics)
 # ## False-positive review (M1, test split, selected threshold)
 #
 # Legitimate emails (label 0) the model scored above the operating
-# threshold — the qualitative evidence for the report's error analysis.
+# threshold : the qualitative evidence for the report's error analysis.
 
 # %%
 predictions = (m1_test_probabilities >= m1_selected_threshold).astype(int)
@@ -245,7 +245,7 @@ false_positives[["corpus", "probability", "text"]].head(10)
 # %% [markdown]
 # ## Save test-set metrics
 #
-# M0's test-set numbers are new — `m0_baseline.json` from step 7 is
+# M0's test-set numbers are new : `m0_baseline.json` from step 7 is
 # validation-only and must not be overwritten with test numbers.
 
 # %%

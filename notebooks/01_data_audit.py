@@ -11,7 +11,7 @@
 # ---
 
 # %% [markdown]
-# # 01 — Data audit
+# # 01 : Data audit
 #
 # Purpose: report per-corpus row counts, class balance, empty/corrupted rows,
 # duplicate rate and text-length distributions for the six pooled Kaggle
@@ -126,7 +126,7 @@ print(
 # ## Duplicate rate
 #
 # Exact duplicates on subject+body, pooled across all six corpora. This is
-# the number that motivates the grouped content-hash split —
+# the number that motivates the grouped content-hash split :
 # a plain random split would let these duplicates land on both sides.
 
 # %%
@@ -196,7 +196,7 @@ for corpus_name, df in corpora.items():
 # but confounds the positive class with exactly two source corpora)?
 #
 # **Evidence from this audit:**
-# - Nazario and Nigerian Fraud are **100% positive** — neither corpus
+# - Nazario and Nigerian Fraud are **100% positive** : neither corpus
 #   contributes a single legitimate example. Restricting positives to these
 #   two corpora would mean the negative class comes entirely from four other
 #   corpora and the positive class from two, which is precisely the kind of
@@ -204,7 +204,7 @@ for corpus_name, df in corpora.items():
 #.
 # - CEAS-08, Enron, Ling and SpamAssassin all mix both classes, so the
 #   "phishing/spam vs legitimate" framing draws its positive examples from
-#   six different corpora and its negative examples from four — not a clean
+#   six different corpora and its negative examples from four : not a clean
 #   split, but not a source-tied confound either.
 # - Restricting positives to Nazario + Nigerian Fraud would also shrink the
 #   positive class from tens of thousands of rows to ~4 900, discarding most
@@ -215,7 +215,7 @@ for corpus_name, df in corpora.items():
 # labels actually encode, keeps the positive class from being tied to two
 # in §4.1. The corpus probe and LOCO evaluation
 # exist precisely to surface and report the corpus-confound risk this
-# decision does not eliminate — restricting to Nazario + Nigerian Fraud
+# decision does not eliminate : restricting to Nazario + Nigerian Fraud
 # would not remove that risk, it would just hide it inside a smaller,
 # single-purpose positive class.
 #

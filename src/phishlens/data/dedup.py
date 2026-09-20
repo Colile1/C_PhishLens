@@ -12,11 +12,11 @@ from phishlens.data.hashing import content_hash
 def assign_groups(frame: pd.DataFrame, text_column: str = "text") -> pd.DataFrame:
     """Attach a `content_hash` group id to every row.
 
-    Rows are not deleted. Grouping is what prevents leakage — the splitter
-    assigns a whole group to one split — whereas deleting near-duplicates
+    Rows are not deleted. Grouping is what prevents leakage : the splitter
+    assigns a whole group to one split : whereas deleting near-duplicates
     would discard data without making the split any safer.
 
-    Inputs: frame — cleaned frame; text_column — column to hash.
+    Inputs: frame : cleaned frame; text_column : column to hash.
     Output: a copy of the frame with a `content_hash` column added.
 
     Raises KeyError if text_column is not present.
@@ -36,9 +36,9 @@ def duplicate_report(frame: pd.DataFrame) -> pd.DataFrame:
 
     A row is counted as a duplicate when its content-hash group holds more
     than one row anywhere in the pool, so cross-corpus repetition is counted
-    too — that is the repetition a random split would leak.
+    too : that is the repetition a random split would leak.
 
-    Inputs: frame — frame carrying `content_hash` and `corpus` columns.
+    Inputs: frame : frame carrying `content_hash` and `corpus` columns.
     Output: DataFrame indexed by corpus with columns rows, unique_groups,
     duplicate_rows, duplicate_rate; plus a final "ALL" row for the pool.
 

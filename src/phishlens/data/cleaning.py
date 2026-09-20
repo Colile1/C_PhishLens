@@ -61,7 +61,7 @@ def strip_html(text: str) -> str:
     Script and style elements are removed with their contents, because their
     bodies are code rather than anything the recipient read.
 
-    Inputs: text — raw email text, possibly containing HTML.
+    Inputs: text : raw email text, possibly containing HTML.
     Output: the visible text with whitespace collapsed.
     """
     if not isinstance(text, str):
@@ -77,11 +77,11 @@ def clean(frame: pd.DataFrame, config: Config) -> tuple[pd.DataFrame, CleaningRe
     Joins the configured text columns with the configured separator, strips
     HTML when enabled, collapses whitespace, and drops in order: rows with a
     null or non-binary label, mbox parser residue, and rows shorter than
-    `data.min_characters`. Lowercasing is deliberately NOT applied here — that
+    `data.min_characters`. Lowercasing is deliberately NOT applied here : that
     belongs to the feature layer, so this frame stays readable in the audit and
     in explanations.
 
-    Inputs: frame — pooled frame from `load_corpora`; config — validated Config.
+    Inputs: frame : pooled frame from `load_corpora`; config : validated Config.
     Output: (cleaned frame with a `text` column and a reset index,
     CleaningReport of what was dropped).
 

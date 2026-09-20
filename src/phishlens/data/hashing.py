@@ -27,7 +27,7 @@ def normalise_for_hash(text: str) -> str:
     sequence of alphabetic words, which is stable across the substitutions a
     phishing template makes per victim.
 
-    Inputs: text — the combined subject and body of one email.
+    Inputs: text : the combined subject and body of one email.
     Output: the normalised string; "" for empty or non-textual input.
     """
     if not isinstance(text, str):
@@ -44,7 +44,7 @@ def content_hash(text: str) -> str:
     Two emails whose normalised skeletons are identical receive the same id
     and are therefore assigned to the same split as a unit.
 
-    Inputs: text — the combined subject and body of one email.
+    Inputs: text : the combined subject and body of one email.
     Output: a 64-character hexadecimal SHA-256 digest.
     """
     normalised = normalise_for_hash(text)

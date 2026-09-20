@@ -9,10 +9,10 @@ and every one of them would end up in the report.
 
 | File | Responsibility |
 |------|----------------|
-| `metrics.py` | `compute_metrics(y_true, y_prob, threshold) -> Metrics` — accuracy, precision, recall, F1, macro-F1, AUC-ROC, average precision and the confusion matrix counts. The positive class is asserted, not assumed. Also `select_threshold(y_true, y_prob, objective)`, the validation-only operating-point search added by the design. Pure: takes arrays, returns a dataclass, touches no files |
-| `plots.py` | `plot_roc(...)`, `plot_precision_recall(...)`, `plot_confusion_matrix(...)`, `plot_loss_curve(...)` — each returns a Matplotlib `Figure` so a notebook can display it and the caller decides whether to save. Axis labels, titles and legends are mandatory, not optional |
+| `metrics.py` | `compute_metrics(y_true, y_prob, threshold) -> Metrics` : accuracy, precision, recall, F1, macro-F1, AUC-ROC, average precision and the confusion matrix counts. The positive class is asserted, not assumed. Also `select_threshold(y_true, y_prob, objective)`, the validation-only operating-point search added by the design. Pure: takes arrays, returns a dataclass, touches no files |
+| `plots.py` | `plot_roc(...)`, `plot_precision_recall(...)`, `plot_confusion_matrix(...)`, `plot_loss_curve(...)` : each returns a Matplotlib `Figure` so a notebook can display it and the caller decides whether to save. Axis labels, titles and legends are mandatory, not optional |
 | `reporting.py` | `metrics_table(results: dict[str, Metrics]) -> DataFrame` for the M0 vs M1 comparison, and `per_corpus_table(...)` for the breakdown. Formatting only |
-| `persistence.py` | `save_metrics(metrics, path, context) -> None` — write the JSON with the commit hash, seed and config hash embedded, so a number in the report traces back to a run |
+| `persistence.py` | `save_metrics(metrics, path, context) -> None` : write the JSON with the commit hash, seed and config hash embedded, so a number in the report traces back to a run |
 
 ## Rules
 
@@ -32,7 +32,7 @@ and every one of them would end up in the report.
 ## Integration
 
 Imports `config` only. Imported by `training` (per-epoch metrics) and by the
-evaluation notebooks. Must not import `models`, `data` or `serving` — it works
+evaluation notebooks. Must not import `models`, `data` or `serving` : it works
 on arrays, which is what makes it testable by hand.
 
 Done when: on a fixed 2×2 confusion matrix worked out by hand, precision, recall

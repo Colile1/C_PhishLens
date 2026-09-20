@@ -24,7 +24,7 @@ def commit_hash() -> str:
 
     Every metric file records the commit that produced it, so a number in the
     report can be traced to the code that computed it. This returns a sentinel
-    rather than raising when git is unavailable — a reader running from an
+    rather than raising when git is unavailable : a reader running from an
     extracted zip has no repository, and failing there would block the
     notebooks from running at all.
 
@@ -57,8 +57,8 @@ def save_metrics(metrics: Metrics, path: Path, context: dict[str, object]) -> No
     from the context, so it cannot be reported as something other than the
     threshold the scores were actually computed at.
 
-    Inputs: metrics — the scores to record; path — destination JSON file;
-    context — provenance fields written flat alongside the scores, typically
+    Inputs: metrics : the scores to record; path : destination JSON file;
+    context : provenance fields written flat alongside the scores, typically
     model, split_evaluated, seed, commit_hash, config_hash and row counts.
     Output: none; writes the file, creating parent directories as needed.
 

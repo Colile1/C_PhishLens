@@ -19,7 +19,7 @@ def save_checkpoint(model: nn.Module, path: Path) -> None:
     Weights are moved to the CPU before saving so a checkpoint written on one
     device loads on another.
 
-    Inputs: model — the module whose state to save; path — destination file.
+    Inputs: model : the module whose state to save; path : destination file.
     Output: none; writes the state dict to path.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -33,10 +33,10 @@ def restore_best(model: nn.Module, path: Path) -> None:
     This is the step that decides which model the reported test numbers
     describe. If it is skipped, the model carries the last epoch's weights,
     which are by definition worse than the best epoch's whenever early
-    stopping fired — and every number in the report would then belong to a
+    stopping fired : and every number in the report would then belong to a
     model that was never the one selected.
 
-    Inputs: model — the module to restore into; path — a file written by
+    Inputs: model : the module to restore into; path : a file written by
     save_checkpoint.
     Output: none; the model's parameters are replaced in place.
 

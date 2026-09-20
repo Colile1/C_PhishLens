@@ -19,7 +19,7 @@ REQUIRED_COLUMNS = ("subject", "body", "label")
 def corpus_name_for(file_name: str) -> str:
     """Derive the corpus tag from a corpus file name.
 
-    Inputs: file_name — a corpus file name such as "CEAS_08.csv".
+    Inputs: file_name : a corpus file name such as "CEAS_08.csv".
     Output: the file's stem, used as the value of the `corpus` column.
     """
     return Path(file_name).stem
@@ -34,7 +34,7 @@ def load_corpora(config: Config) -> pd.DataFrame:
     present in every corpus, and the audit-only columns are added as NA where
     a corpus does not carry them.
 
-    Inputs: config — validated Config; reads `config.data.corpora` from
+    Inputs: config : validated Config; reads `config.data.corpora` from
     `config.paths.raw`.
     Output: pooled DataFrame with the required columns, the audit-only
     columns, and `corpus`, indexed 0..n-1.

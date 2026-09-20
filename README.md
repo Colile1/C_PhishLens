@@ -1,9 +1,9 @@
 # C_PhishLens
 
-**Project:** ITRI625 Machine Learning project — North-West University, Semester 2, 2026
+**Project:** ITRI625 Machine Learning project : North-West University, Semester 2, 2026
 **Author:** Colile Sibanda
 **Repository:** https://github.com/Colile1/C_PhishLens
-**Deadline:** _TBD in the brief — confirm and record here_
+**Deadline:** _TBD in the brief : confirm and record here_
 
 A deep learning classifier that decides whether an email is phishing or
 legitimate from its subject and body text alone, and returns the tokens that
@@ -19,7 +19,7 @@ next to the headline number.
 
 ## What it does
 
-- Classifies an email as phishing or legitimate from text alone — no headers, no URL features, no sandbox.
+- Classifies an email as phishing or legitimate from text alone : no headers, no URL features, no sandbox.
 - Logs accuracy, precision, recall, F1, macro-F1, AUC-ROC and loss after every training epoch.
 - Plots ROC, precision–recall, confusion matrix and loss curves with Matplotlib, visible inside the notebooks.
 - Stops training on a patience value implemented in the main loop and restores the best weights before the test set is touched.
@@ -30,16 +30,16 @@ next to the headline number.
 
 | Path | Purpose |
 |------|---------|
-| `run_api.py` | Thin entry point — starts the FastAPI service (built at step 13) |
-| `run_app.py` | Thin entry point — starts the Tkinter client (built at step 14) |
+| `run_api.py` | Thin entry point : starts the FastAPI service (built at step 13) |
+| `run_app.py` | Thin entry point : starts the Tkinter client (built at step 14) |
 | `configs/` | `default.yaml`: seed, paths, split ratios, model and training hyperparameters |
 | `notebooks/` | The executable record: audit, baseline, training, evaluation, LOCO, XAI |
-| `src/phishlens/` | Core library — config, data, features, models, training, evaluation, explain, serving |
+| `src/phishlens/` | Core library : config, data, features, models, training, evaluation, explain, serving |
 | `src/desktop/` | Tkinter presentation layer |
 | `tests/unit/` | Unit tests for the core library |
 | `tests/critical/` | The guards: split integrity, corpus probe, metric correctness |
-| `data/` | `raw/` downloaded corpora, `interim/` cleaned, `processed/` split files — none committed |
-| `artifacts/` | Trained models, per-epoch metric CSVs, saved figures — none committed |
+| `data/` | `raw/` downloaded corpora, `interim/` cleaned, `processed/` split files : none committed |
+| `artifacts/` | Trained models, per-epoch metric CSVs, saved figures : none committed |
 | `scripts/` | Small operational helpers (download, smoke test) |
 
 ## Quick start (once built)
@@ -64,7 +64,7 @@ Every number in the report is reproducible from three things: the committed
 `configs/default.yaml`, the pinned `requirements.txt`, and the commit hash
 recorded in `/metadata` and in each notebook's header cell.
 
-One seed drives every source of randomness — `random`, `numpy`, `torch`, the
+One seed drives every source of randomness : `random`, `numpy`, `torch`, the
 splitter and LIME. The split is written to disk, so the same split is reused by
 every model rather than redrawn. The test set is loaded in exactly one
 notebook, once, at the end.

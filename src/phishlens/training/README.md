@@ -9,15 +9,15 @@ the report belong to a model that was never reported.
 
 | File | Responsibility |
 |------|----------------|
-| `loop.py` | `train(model, train_loader, val_loader, config) -> TrainingResult` — the main loop. Explicit, readable, and printed into the notebook with `inspect.getsource`. Holds the patience counter, the best-score tracking and the restore. No plotting, no file writing beyond the checkpoint |
+| `loop.py` | `train(model, train_loader, val_loader, config) -> TrainingResult` : the main loop. Explicit, readable, and printed into the notebook with `inspect.getsource`. Holds the patience counter, the best-score tracking and the restore. No plotting, no file writing beyond the checkpoint |
 | `early_stopping.py` | `EarlyStopping(metric, mode, patience, min_delta)` with `update(score: float) -> bool` returning whether to stop, and `best_epoch` / `best_score` properties. Pure state machine, no tensors, so it is unit-testable on a list of floats |
-| `checkpoint.py` | `save_checkpoint(model, path)` and `restore_best(model, path) -> None` — write the best epoch's weights and load them back before evaluation. Errors if the file is missing rather than silently continuing with the last epoch |
-| `batching.py` | `make_loaders(split, config) -> tuple[DataLoader, DataLoader, DataLoader]` — datasets and loaders, with the generator seeded from config so batch order is reproducible |
-| `weighting.py` | `class_weights(labels) -> Tensor` — positive class weight from the training split only |
+| `checkpoint.py` | `save_checkpoint(model, path)` and `restore_best(model, path) -> None` : write the best epoch's weights and load them back before evaluation. Errors if the file is missing rather than silently continuing with the last epoch |
+| `batching.py` | `make_loaders(split, config) -> tuple[DataLoader, DataLoader, DataLoader]` : datasets and loaders, with the generator seeded from config so batch order is reproducible |
+| `weighting.py` | `class_weights(labels) -> Tensor` : positive class weight from the training split only |
 
 ## The behaviour that has to be exactly right
 
-1. Patience watches `config.training.early_stopping.metric` — validation
+1. Patience watches `config.training.early_stopping.metric` : validation
    macro-F1, not loss. Loss and F1 disagree on imbalanced data, and the report
    is written about F1.
 2. `min_delta` means an improvement smaller than it does not reset the counter.
