@@ -1,0 +1,118 @@
+{
+  "commit": "d0c8c14a205f46d0b45b80a7b1bb5d892703795d",
+  "emails_explained": 4,
+  "explanations_computed": 8,
+  "m1_selected_threshold": 0.5698,
+  "max_probability_spread": 0.0,
+  "mean_m0_m1_jaccard": 0.5705,
+  "mean_seed_jaccard": 0.6389,
+  "method": "lime",
+  "min_seed_jaccard": 0.1538,
+  "num_features": 15,
+  "num_samples": 1000,
+  "per_case_model_agreement": [
+    {
+      "M0 P(phishing)": 0.9787,
+      "M1 P(phishing)": 1.0,
+      "case": "Confident phishing (true positive)",
+      "jaccard": 0.1538,
+      "shared": "account, i, the, your",
+      "shared tokens": 4
+    },
+    {
+      "M0 P(phishing)": 0.0001,
+      "M1 P(phishing)": 0.0,
+      "case": "Confident legitimate (true negative)",
+      "jaccard": 0.3636,
+      "shared": "<num>, enron, jennifer, mark, meeting, october, thanks, would",
+      "shared tokens": 8
+    },
+    {
+      "M0 P(phishing)": 0.8661,
+      "M1 P(phishing)": 1.0,
+      "case": "False positive : legitimate, flagged",
+      "jaccard": 0.7647,
+      "shared": "about, dear, for, information, korean, macintosh, madam, please",
+      "shared tokens": 13
+    },
+    {
+      "M0 P(phishing)": 0.8461,
+      "M1 P(phishing)": 0.5698,
+      "case": "Borderline : nearest the threshold",
+      "jaccard": 1.0,
+      "shared": "<url>, a, have, need, no, secret, words",
+      "shared tokens": 7
+    }
+  ],
+  "per_case_stability": [
+    {
+      "P(phishing) spread": 0.0,
+      "agreed tokens": 10,
+      "case": "Confident phishing (true positive)",
+      "jaccard": 0.5,
+      "model": "M0",
+      "seeds": "42, 1337"
+    },
+    {
+      "P(phishing) spread": 0.0,
+      "agreed tokens": 4,
+      "case": "Confident phishing (true positive)",
+      "jaccard": 0.1538,
+      "model": "M1",
+      "seeds": "42, 1337"
+    },
+    {
+      "P(phishing) spread": 0.0,
+      "agreed tokens": 9,
+      "case": "Confident legitimate (true negative)",
+      "jaccard": 0.4286,
+      "model": "M0",
+      "seeds": "42, 1337"
+    },
+    {
+      "P(phishing) spread": 0.0,
+      "agreed tokens": 4,
+      "case": "Confident legitimate (true negative)",
+      "jaccard": 0.1538,
+      "model": "M1",
+      "seeds": "42, 1337"
+    },
+    {
+      "P(phishing) spread": 0.0,
+      "agreed tokens": 15,
+      "case": "False positive : legitimate, flagged",
+      "jaccard": 1.0,
+      "model": "M0",
+      "seeds": "42, 1337"
+    },
+    {
+      "P(phishing) spread": 0.0,
+      "agreed tokens": 14,
+      "case": "False positive : legitimate, flagged",
+      "jaccard": 0.875,
+      "model": "M1",
+      "seeds": "42, 1337"
+    },
+    {
+      "P(phishing) spread": 0.0,
+      "agreed tokens": 7,
+      "case": "Borderline : nearest the threshold",
+      "jaccard": 1.0,
+      "model": "M0",
+      "seeds": "42, 1337"
+    },
+    {
+      "P(phishing) spread": 0.0,
+      "agreed tokens": 7,
+      "case": "Borderline : nearest the threshold",
+      "jaccard": 1.0,
+      "model": "M1",
+      "seeds": "42, 1337"
+    }
+  ],
+  "seed": 42,
+  "stability_seeds": [
+    42,
+    1337
+  ]
+}
