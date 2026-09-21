@@ -188,6 +188,20 @@ class ServingConfig:
 
 
 @dataclass(frozen=True)
+class DesktopConfig:
+    """Tkinter desktop client configuration.
+
+    Inputs: api_base_url, the base URL of the running FastAPI service;
+    request_timeout_seconds, how long a request may take before the client
+    gives up and reports the service as unreachable.
+    Output: immutable DesktopConfig.
+    """
+
+    api_base_url: str
+    request_timeout_seconds: float
+
+
+@dataclass(frozen=True)
 class Config:
     """Root configuration object passed to every module in the pipeline.
 
@@ -207,3 +221,4 @@ class Config:
     evaluation: EvalConfig
     explain: ExplainConfig
     serving: ServingConfig
+    desktop: DesktopConfig

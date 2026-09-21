@@ -13,6 +13,7 @@ import yaml
 from phishlens.config.schema import (
     Config,
     DataConfig,
+    DesktopConfig,
     EarlyStoppingConfig,
     EvalConfig,
     ExplainConfig,
@@ -130,6 +131,12 @@ def _build_config(raw: dict[str, Any]) -> Config:
 
     serving = ServingConfig(**raw["serving"])
 
+    desktop_raw = raw["desktop"]
+    desktop = DesktopConfig(
+        api_base_url=desktop_raw["api_base_url"],
+        request_timeout_seconds=float(desktop_raw["request_timeout_seconds"]),
+    )
+
     return Config(
         seed=raw["seed"],
         paths=paths,
@@ -142,6 +149,7 @@ def _build_config(raw: dict[str, Any]) -> Config:
         evaluation=evaluation,
         explain=explain,
         serving=serving,
+        desktop=desktop,
     )
 
 

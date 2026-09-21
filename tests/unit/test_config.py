@@ -91,6 +91,10 @@ VALID_CONFIG: dict = {
         "model_file": "artifacts/models/text_cnn_best.pt",
         "max_input_characters": 50000,
     },
+    "desktop": {
+        "api_base_url": "http://127.0.0.1:8000",
+        "request_timeout_seconds": 30.0,
+    },
 }
 
 
@@ -139,6 +143,27 @@ def test_missing_nested_field_is_named(tmp_path):
     raw = copy.deepcopy(VALID_CONFIG)
     del raw["paths"]["raw"]
     with pytest.raises(ConfigError, match="paths.raw"):
+        validate(raw)
+
+
+def test_missing_desktop_api_base_url_is_named():
+    raw = copy.deepcopy(VALID_CONFIG)
+    del raw["desktop"]["api_base_url"]
+    with pytest.raises(ConfigError, match="desktop.api_base_url"):
+        validate(raw)
+
+
+def test_blank_desktop_api_base_url_is_rejected():
+    raw = copy.deepcopy(VALID_CONFIG)
+    raw["desktop"]["api_base_url"] = "   "
+    with pytest.raises(ConfigError, match="desktop.api_base_url"):
+        validate(raw)
+
+
+def test_non_positive_request_timeout_is_rejected():
+    raw = copy.deepcopy(VALID_CONFIG)
+    raw["desktop"]["request_timeout_seconds"] = 0
+    with pytest.raises(ConfigError, match="request_timeout_seconds"):
         validate(raw)
 
 

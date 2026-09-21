@@ -97,3 +97,7 @@ serving:
   port: 8000
   model_file: artifacts/models/text_cnn_best.pt
   max_input_characters: 50000
+
+desktop:
+  api_base_url: http://127.0.0.1:8000  # point here at a hosted API to demo remotely
+  request_timeout_seconds: 30.0        # /explain runs LIME, so allow well over /predict

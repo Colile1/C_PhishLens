@@ -20,6 +20,7 @@ _REQUIRED_TOP_LEVEL = (
     "evaluation",
     "explain",
     "serving",
+    "desktop",
 )
 
 _REQUIRED_PATHS = ("raw", "interim", "processed", "models", "figures", "metrics")
@@ -76,6 +77,8 @@ _REQUIRED_EVALUATION = ("decision_threshold", "figure_dpi")
 _REQUIRED_EXPLAIN = ("method", "num_features", "num_samples", "stability_seeds")
 
 _REQUIRED_SERVING = ("host", "port", "model_file", "max_input_characters")
+
+_REQUIRED_DESKTOP = ("api_base_url", "request_timeout_seconds")
 
 
 class ConfigError(ValueError):
@@ -177,3 +180,13 @@ def validate(raw: dict[str, Any]) -> None:
     _require_fields(raw["serving"], _REQUIRED_SERVING, "serving")
     if not (0 < raw["serving"]["port"] < 65536):
         raise ConfigError("Config field 'serving.port' must be a valid TCP port.")
+
+    _require_fields(raw["desktop"], _REQUIRED_DESKTOP, "desktop")
+    if not str(raw["desktop"]["api_base_url"]).strip():
+        raise ConfigError("Config field 'desktop.api_base_url' must be non-empty.")
+    timeout = raw["desktop"]["request_timeout_seconds"]
+    if not isinstance(timeout, (int, float)) or isinstance(timeout, bool) or timeout <= 0:
+        raise ConfigError(
+            "Config field 'desktop.request_timeout_seconds' must be a positive number, "
+            f"got {timeout!r}."
+        )
