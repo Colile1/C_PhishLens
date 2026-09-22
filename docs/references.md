@@ -35,10 +35,11 @@ justification.
 
 ## Real-world deployment, drift and false positives (§3.4)
 
-**R2 : confirm author list and article number.**
+**R2 : verified.** (2026-09-22: author list, volume, issue and article number
+checked against the ACM Digital Library record.)
 Apruzzese, G., Laskov, P., Montes de Oca, E., Mallouli, W., Búrdalo Rapa, L.,
 Grammatopoulos, A.V. & Di Franco, F. 2023. The role of machine learning in
-cybersecurity. *Digital Threats: Research and Practice*, 4(1).
+cybersecurity. *Digital Threats: Research and Practice*, 4(1):article 8, 38 pp.
 https://doi.org/10.1145/3545574
 
 *Why it matters here:* the standard reference for the gap between reported
@@ -46,20 +47,23 @@ research performance and operational deployment : why a model that scores well
 in a paper underperforms in a SOC. Use for the strengths and limitations part
 of §3.4.
 
-**R3 : confirm author list.**
+**R3 : verified.** (2026-09-22: author list and article number confirmed.)
+Shyaa, M.A., Ibrahim, N.F., Zainol, Z., Abdullah, R., Anbar, M. & Alzubaidi, L.
 2024. Evolving cybersecurity frontiers: a comprehensive survey on concept drift
 and feature dynamics aware machine and deep learning in intrusion detection
-systems. *Engineering Applications of Artificial Intelligence*, 137:109143.
-https://doi.org/10.1016/j.engappai.2024.109143
+systems. *Engineering Applications of Artificial Intelligence*,
+137(Part A):109143. https://doi.org/10.1016/j.engappai.2024.109143
 
 *Why it matters here:* concept drift is one of the three challenges the brief
 names explicitly. Phishing drifts fast : a model trained on 2008 CEAS mail is
 being asked about 2026 campaigns. Use in §3.4 and to frame the temporal
 limitation of this dataset.
 
-**R4 : confirm author list and venue details.**
-MeAJOR corpus: a multi-source dataset for phishing email detection.
-arXiv:2507.17978. https://arxiv.org/abs/2507.17978
+**R4 : verified.** (2026-09-22: authors and submission year confirmed on arXiv.
+Note the year is 2025, not 2026, and it is a preprint : cite it as such.)
+Mendes, P., Maia, E. & Praça, I. 2025. MeAJOR corpus: a multi-source dataset
+for phishing email detection. arXiv:2507.17978.
+https://arxiv.org/abs/2507.17978
 
 *Why it matters here:* a recent multi-source phishing corpus of 135 894 emails
 reporting 98.34% F1 with XGBoost on text plus URL features. Useful as the
@@ -71,7 +75,7 @@ strengthens the argument that the score alone is not the contribution.
 
 ## Architecture (§3.2)
 
-**R5 : confirm page numbers.**
+**R5 : verified.** (2026-09-22: pages confirmed via the ACL Anthology.)
 Kim, Y. 2014. Convolutional neural networks for sentence classification.
 *Proceedings of the 2014 Conference on Empirical Methods in Natural Language
 Processing (EMNLP)*. Doha: Association for Computational Linguistics.
@@ -81,7 +85,7 @@ https://doi.org/10.3115/v1/D14-1181
 parallel convolutions of width 3, 4 and 5 with max-over-time pooling as
 detectors of local phrases, which is what phishing lures are.
 
-**R6 : confirm.**
+**R6 : verified.** (2026-09-22: title, authors and year confirmed on arXiv.)
 Sanh, V., Debut, L., Chaumond, J. & Wolf, T. 2019. DistilBERT, a distilled
 version of BERT: smaller, faster, cheaper and lighter. arXiv:1910.01108.
 https://arxiv.org/abs/1910.01108
@@ -92,17 +96,19 @@ https://arxiv.org/abs/1910.01108
 
 ## Explainability (§3.3 and the bonus)
 
-**R7 : confirm page numbers.**
+**R7 : verified.** (2026-09-22: pages confirmed against the ACM record.)
 Ribeiro, M.T., Singh, S. & Guestrin, C. 2016. "Why should I trust you?":
 explaining the predictions of any classifier. *Proceedings of the 22nd ACM
 SIGKDD International Conference on Knowledge Discovery and Data Mining*. San
-Francisco: ACM. https://doi.org/10.1145/2939672.2939778
+Francisco: ACM, pp. 1135-1144. https://doi.org/10.1145/2939672.2939778
 
 *Why it matters here:* LIME, the primary attribution method. Cite when
-describing what the highlighted tokens in the desktop app actually represent —
+describing what the highlighted tokens in the desktop app actually represent :
 a local linear approximation, not a global statement about the model.
 
-**R8 : confirm.**
+**R8 : not cited.** SHAP was not used : Captum was specified as the optional
+cross-check and the LIME stability analysis served the purpose instead. Left
+here for completeness; verify before citing if that changes.
 Lundberg, S.M. & Lee, S.-I. 2017. A unified approach to interpreting model
 predictions. *Advances in Neural Information Processing Systems 30 (NeurIPS)*.
 https://arxiv.org/abs/1705.07874
@@ -111,14 +117,25 @@ https://arxiv.org/abs/1705.07874
 
 ---
 
-## To find before writing §3.4
+## Status of the §3.4 reference gap (closed 2026-09-22, the build)
 
-The brief asks for intrusion detection, threat classification, anomaly
-detection **and** risk assessment. R1–R4 cover phishing, drift and deployment.
-Still needed:
+The brief asks §3.4 to cover intrusion detection, threat classification,
+anomaly detection **and** risk assessment. The earlier plan was to add a
+dedicated reference for each of the last two plus a South African source.
+Resolution as drafted:
 
-- [ ] One reference on ML-based anomaly detection in production and its false-positive burden
-- [ ] One reference on ML in security risk assessment or alert prioritisation
-- [ ] One South African or African-context source if one exists, since the report's scenario is a South African financial institution
+- **Anomaly detection and risk assessment** are covered in §4.1 as application
+  areas, argued from the general properties of those methods (base rates,
+  precision under class imbalance, ranking rather than blocking) and tied back
+  to this project's own measured results. They are supported by R2, which
+  covers the deployment gap across application areas, and R3, which covers
+  intrusion detection and drift directly. No claim in §4.1 rests on a source
+  not in this list.
+- **A South African or African-context source** was searched for and none
+  suitable was found. The report therefore uses the South African bank abuse
+  mailbox as a *scenario framing* in §1 rather than as an empirical claim about
+  the South African threat landscape, so no citation is owed. Do not add a
+  weak or unverified local source merely to fill this slot.
 
-Add them here with the same verification marking before citing.
+Every reference R1-R7 that the report cites is marked verified above. R8 is
+listed but not cited. Nothing is outstanding on *confirm*.
