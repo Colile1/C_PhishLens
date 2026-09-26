@@ -1,5 +1,5 @@
 # app.py
-# Purpose: the PhishLens Tkinter window. Presentation and event wiring only.
+# Purpose: the PhishLens Tkinter window. Layout and event wiring only.
 # Author: Colile Sibanda
 
 from __future__ import annotations
@@ -7,15 +7,20 @@ from __future__ import annotations
 import queue
 import threading
 import tkinter as tk
-from tkinter import ttk
+from pathlib import Path
+from tkinter import filedialog, ttk
 
-from desktop import highlight, messages
+from desktop import messages, theme
 from desktop.api_client import ApiClient, ApiError, ExplainResult
+from desktop.email_file import read_email_text
+from desktop.header_bar import HeaderBar
+from desktop.input_panel import InputPanel
+from desktop.results_panel import ResultsPanel
 
-_PADDING = 10
-
-# How often the Tk thread drains the worker's result queue.
+# How often the Tk thread drains the workers' queues.
 _POLL_MILLISECONDS = 100
+# How often the header re-checks whether the API is up.
+_HEALTH_MILLISECONDS = 8000
 
 
 class PhishLensApp:
@@ -35,15 +40,24 @@ class PhishLensApp:
         self, api_base_url: str, timeout: float, root: tk.Misc | None = None
     ) -> None:
         self.client = ApiClient(api_base_url, timeout)
-        # The worker thread never touches a widget: Tk is not thread-safe, and
-        # calling into it off the main thread raises "main thread is not in
-        # main loop". It posts its outcome here and the Tk thread renders it.
+        # Workers never touch a widget: Tk is not thread-safe. They post their
+        # outcome to a queue and the Tk thread renders it. Health checks get
+        # their own queue so a poll can never interleave with an analysis.
         self._results: queue.Queue = queue.Queue()
-        self.root = tk.Tk() if root is None else root
+        self._health: queue.Queue = queue.Queue()
+        if root is None:
+            theme.enable_high_dpi()  # must precede the root, or Tk renders blurry
+            root = tk.Tk()
+        self.root = root
         self.root.title(messages.WINDOW_TITLE)
-        self.root.geometry("980x760")
+        scale = self.root.winfo_fpixels("1i") / 96
+        self.root.geometry(f"{int(1240 * scale)}x{int(800 * scale)}")
+        self.root.minsize(int(900 * scale), int(600 * scale))
+        theme.apply_styles(self.root)
         self._build_widgets()
+        self._bind_shortcuts()
         self.root.after(_POLL_MILLISECONDS, self._drain_results)
+        self._check_health()
 
     def run(self) -> None:
         """Enter the Tk main loop.
@@ -51,131 +65,65 @@ class PhishLensApp:
         Inputs: none.
         Output: none; blocks until the window is closed.
         """
+        self.input_text.focus_set()
         self.root.mainloop()
 
-    def _drain_results(self) -> None:
-        """Render whatever the worker thread has posted, then reschedule.
-
-        Runs on the Tk thread, so it is the only place a worker's outcome
-        reaches a widget.
-
-        Inputs: none.
-        Output: none; reschedules itself every `_POLL_MILLISECONDS`.
-        """
-        try:
-            while True:
-                outcome, payload = self._results.get_nowait()
-                if outcome == "result":
-                    self._show_result(payload)
-                else:
-                    self._show_error(payload)
-        except queue.Empty:
-            pass
-        self.root.after(_POLL_MILLISECONDS, self._drain_results)
-
     def _build_widgets(self) -> None:
-        """Lay out every widget in the window.
+        """Lay out the header, the input and results panes, and the status bar.
 
         Inputs: none.
         Output: none; populates `self.root`.
         """
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(1, weight=1)
-        self.root.rowconfigure(4, weight=2)
+        self.header = HeaderBar(self.root, lambda: self._check_health(False))
+        self.header.frame.grid(row=0, column=0, sticky="ew")
 
-        ttk.Label(self.root, text=messages.INPUT_HEADING).grid(
-            row=0, column=0, sticky="w", padx=_PADDING, pady=(_PADDING, 0)
+        panes = ttk.PanedWindow(self.root, orient="horizontal")
+        panes.grid(row=1, column=0, sticky="nsew", padx=theme.PADDING,
+                   pady=theme.PADDING)
+        self.input_panel = InputPanel(
+            panes, on_analyse=self._on_analyse, on_clear=self._on_clear,
+            on_paste=self._on_paste, on_open=self._on_open,
         )
-        self.input_text = tk.Text(self.root, height=10, wrap="word")
-        self.input_text.grid(
-            row=1, column=0, sticky="nsew", padx=_PADDING, pady=(0, _PADDING)
-        )
+        self.results_panel = ResultsPanel(panes)
+        panes.add(self.input_panel.frame, weight=2)
+        panes.add(self.results_panel.frame, weight=3)
 
-        self._build_controls(row=2)
-        self._build_verdict(row=3)
-        self._build_explanation(row=4)
+        # Shortcuts to the widgets the event handlers and the tests read.
+        self.input_text = self.input_panel.input_text
+        self.analyse_button = self.input_panel.analyse_button
+        self.verdict_label = self.results_panel.verdict_label
+        self.model_label = self.results_panel.model_label
+        self.explanation_text = self.results_panel.explanation_text
 
-        self.status = ttk.Label(self.root, text=messages.STATUS_READY, anchor="w")
-        self.status.grid(row=5, column=0, sticky="ew", padx=_PADDING, pady=(0, _PADDING))
+        self.status = ttk.Label(self.root, style="Status.TLabel", anchor="w")
+        self.status.grid(row=2, column=0, sticky="ew")
+        self.results_panel.reset()
+        self._set_status(messages.STATUS_READY)
 
-    def _build_controls(self, row: int) -> None:
-        """Build the Analyse and Clear buttons.
+    def _bind_shortcuts(self) -> None:
+        """Bind Ctrl+Enter to Analyse, Ctrl+L to Clear and Ctrl+O to Open.
 
-        Inputs: row : the grid row to place the control strip in.
+        Inputs: none.
         Output: none.
         """
-        controls = ttk.Frame(self.root)
-        controls.grid(row=row, column=0, sticky="ew", padx=_PADDING)
+        def analyse(_event: tk.Event) -> str:
+            self._on_analyse()
+            return "break"  # stop the Text widget inserting a newline
 
-        self.analyse_button = ttk.Button(
-            controls, text=messages.ANALYSE_BUTTON, command=self._on_analyse
-        )
-        self.analyse_button.pack(side="left")
-        ttk.Button(
-            controls, text=messages.CLEAR_BUTTON, command=self._on_clear
-        ).pack(side="left", padx=(6, 0))
+        self.input_text.bind("<Control-Return>", analyse)
+        self.root.bind("<Control-l>", lambda _event: self._on_clear())
+        self.root.bind("<Control-o>", lambda _event: self._on_open())
 
-    def _build_verdict(self, row: int) -> None:
-        """Build the verdict line and its provenance line.
+    def _set_status(self, text: str, error: bool = False) -> None:
+        """Show a line in the status bar, in red when it reports a failure.
 
-        Inputs: row : the grid row to place the verdict panel in.
+        Inputs: text : the message; error : whether it reports a failure.
         Output: none.
         """
-        panel = ttk.Frame(self.root)
-        panel.grid(row=row, column=0, sticky="ew", padx=_PADDING, pady=_PADDING)
-
-        self.verdict_label = ttk.Label(
-            panel, text=messages.VERDICT_PLACEHOLDER, font=("Segoe UI", 13, "bold")
-        )
-        self.verdict_label.pack(anchor="w")
-
-        self.model_label = ttk.Label(panel, text="")
-        self.model_label.pack(anchor="w")
-
-        ttk.Label(panel, text=messages.CAUTION, wraplength=900).pack(
-            anchor="w", pady=(6, 0)
-        )
-
-    def _build_explanation(self, row: int) -> None:
-        """Build the explanation heading, legend and highlighted text panel.
-
-        Inputs: row : the grid row to place the explanation panel in.
-        Output: none.
-        """
-        panel = ttk.Frame(self.root)
-        panel.grid(row=row, column=0, sticky="nsew", padx=_PADDING)
-        panel.columnconfigure(0, weight=1)
-        panel.rowconfigure(2, weight=1)
-
-        ttk.Label(panel, text=messages.EXPLANATION_HEADING).grid(
-            row=0, column=0, sticky="w"
-        )
-        self._build_legend(panel, row=1)
-
-        self.explanation_text = tk.Text(panel, height=14, wrap="word")
-        self.explanation_text.grid(row=2, column=0, sticky="nsew", pady=(4, 0))
-        highlight.configure_tags(self.explanation_text)
-        self.explanation_text.insert("1.0", messages.EXPLANATION_PLACEHOLDER)
-        self.explanation_text.configure(state=tk.DISABLED)
-
-    def _build_legend(self, parent: ttk.Frame, row: int) -> None:
-        """Build the two-swatch legend explaining the highlight colours.
-
-        Inputs: parent : the frame to place the legend in; row : its grid row.
-        Output: none.
-        """
-        legend = ttk.Frame(parent)
-        legend.grid(row=row, column=0, sticky="w", pady=(4, 0))
-
-        phishing_colour, legitimate_colour = highlight.legend_colours()
-        for colour, text in (
-            (phishing_colour, messages.LEGEND_PHISHING),
-            (legitimate_colour, messages.LEGEND_LEGITIMATE),
-        ):
-            tk.Label(legend, text="    ", background=colour, relief="solid", bd=1).pack(
-                side="left", padx=(0, 4)
-            )
-            ttk.Label(legend, text=text).pack(side="left", padx=(0, 16))
+        style = "StatusError.TLabel" if error else "Status.TLabel"
+        self.status.configure(text=text, style=style)
 
     def _on_clear(self) -> None:
         """Reset the window to its initial state.
@@ -183,32 +131,66 @@ class PhishLensApp:
         Inputs: none.
         Output: none.
         """
-        self.input_text.delete("1.0", tk.END)
-        self.verdict_label.configure(text=messages.VERDICT_PLACEHOLDER)
-        self.model_label.configure(text="")
-        self.explanation_text.configure(state=tk.NORMAL)
-        self.explanation_text.delete("1.0", tk.END)
-        self.explanation_text.insert("1.0", messages.EXPLANATION_PLACEHOLDER)
-        self.explanation_text.configure(state=tk.DISABLED)
-        self.status.configure(text=messages.STATUS_READY)
+        self.input_panel.set_text("")
+        self.results_panel.reset()
+        self._set_status(messages.STATUS_READY)
+
+    def _on_paste(self) -> None:
+        """Replace the input with the clipboard's text.
+
+        Inputs: none.
+        Output: none.
+        """
+        try:
+            text = self.root.clipboard_get()
+        except tk.TclError:
+            self._set_status(messages.CLIPBOARD_EMPTY, error=True)
+            return
+        self.input_panel.set_text(text)
+        self._set_status(messages.STATUS_READY)
+
+    def _on_open(self) -> None:
+        """Load a .eml or .txt file into the input as subject and body.
+
+        Inputs: none.
+        Output: none.
+        """
+        chosen = filedialog.askopenfilename(
+            parent=self.root, title=messages.OPEN_DIALOG_TITLE,
+            filetypes=[("Email files", "*.eml *.txt"), ("All files", "*.*")],
+        )
+        if not chosen:
+            return
+        path = Path(chosen)
+        try:
+            text = read_email_text(path)
+        except (OSError, ValueError, LookupError) as error:
+            self._set_status(
+                messages.FILE_UNREADABLE.format(name=path.name, detail=error), error=True)
+            return
+        self.input_panel.set_text(text)
+        self._set_status(messages.FILE_LOADED.format(name=path.name))
 
     def _on_analyse(self) -> None:
         """Validate the input and start the analysis on a background thread.
 
         Blank input is refused here, before any request is sent. The call runs
         off the Tk thread because /explain runs LIME and would otherwise
-        freeze the window; the result is marshalled back with `root.after`.
+        freeze the window; the result comes back through `self._results`.
 
         Inputs: none.
         Output: none.
         """
+        if str(self.analyse_button.cget("state")) == tk.DISABLED:
+            return  # already running; Ctrl+Enter does not go through the button
         text = self.input_text.get("1.0", tk.END).strip()
         if not text:
-            self.status.configure(text=messages.EMPTY_INPUT)
+            self._set_status(messages.EMPTY_INPUT, error=True)
             return
 
         self.analyse_button.configure(state=tk.DISABLED)
-        self.status.configure(text=messages.STATUS_ANALYSING)
+        self._set_status(messages.STATUS_ANALYSING)
+        self.root.configure(cursor="watch")
         threading.Thread(target=self._analyse_worker, args=(text,), daemon=True).start()
 
     def _analyse_worker(self, text: str) -> None:
@@ -226,31 +208,75 @@ class PhishLensApp:
             return
         self._results.put(("result", result))
 
+    def _drain_results(self) -> None:
+        """Render whatever the workers have posted, then reschedule.
+
+        Runs on the Tk thread, so it is the only place a worker's outcome
+        reaches a widget.
+
+        Inputs: none.
+        Output: none; reschedules itself every `_POLL_MILLISECONDS`.
+        """
+        try:
+            while True:
+                outcome, payload = self._results.get_nowait()
+                if outcome == "result":
+                    self._show_result(payload)
+                else:
+                    self._show_error(payload)
+        except queue.Empty:
+            pass
+        try:
+            while True:
+                self.header.show_health(*self._health.get_nowait())
+        except queue.Empty:
+            pass
+        self.root.after(_POLL_MILLISECONDS, self._drain_results)
+
     def _show_result(self, result: ExplainResult) -> None:
-        """Render a successful analysis into the verdict and explanation panels.
+        """Render a successful analysis and return to idle.
 
         Inputs: result : the parsed /explain response.
         Output: none.
         """
-        self.verdict_label.configure(
-            text=messages.format_verdict(
-                result.label, result.probability, result.threshold
-            )
-        )
-        self.model_label.configure(
-            text=messages.format_model_line(result.model_id, result.method)
-        )
-        highlight.render_attributions(
-            self.explanation_text, result.text, result.tokens
-        )
-        self.status.configure(text=messages.STATUS_DONE)
-        self.analyse_button.configure(state=tk.NORMAL)
+        self.results_panel.show(result)
+        self.header.show_health("online", True)
+        self._set_status(messages.STATUS_DONE)
+        self._set_idle()
 
     def _show_error(self, message: str) -> None:
-        """Show a readable failure message and re-enable the Analyse button.
+        """Show a readable failure message, return to idle, re-check the API.
 
         Inputs: message : the ApiError's message, already fit to show a user.
         Output: none.
         """
-        self.status.configure(text=message)
+        self._set_status(message, error=True)
+        self._set_idle()
+        self._check_health(reschedule=False)
+
+    def _set_idle(self) -> None:
+        """Re-enable Analyse and restore the normal cursor.
+
+        Inputs: none.
+        Output: none.
+        """
         self.analyse_button.configure(state=tk.NORMAL)
+        self.root.configure(cursor="")
+
+    def _check_health(self, reschedule: bool = True) -> None:
+        """Poll /health on a worker thread; the result lands in `self._health`.
+
+        Inputs: reschedule : whether to queue the next periodic check.
+        Output: none.
+        """
+        def worker() -> None:
+            try:
+                loaded = self.client.health()
+            except ApiError:
+                self._health.put(("offline", False))
+                return
+            self._health.put(("online", loaded))
+
+        threading.Thread(target=worker, daemon=True).start()
+        if reschedule:
+            self.root.after(_HEALTH_MILLISECONDS, self._check_health)

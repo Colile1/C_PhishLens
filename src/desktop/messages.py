@@ -5,23 +5,41 @@
 from __future__ import annotations
 
 WINDOW_TITLE = "PhishLens : phishing email triage"
+APP_TITLE = "PhishLens"
+APP_SUBTITLE = "Phishing email triage with token-level explanations"
 
 INPUT_HEADING = "Email text (subject and body)"
+INPUT_HINT = "Paste an email or open a .eml / .txt file. Headers are not used."
 EXPLANATION_HEADING = "Why the model decided this"
-ANALYSE_BUTTON = "Analyse"
+SIGNALS_HEADING = "Strongest signals"
+ANALYSE_BUTTON = "Analyse  (Ctrl+Enter)"
 CLEAR_BUTTON = "Clear"
+PASTE_BUTTON = "Paste"
+OPEN_BUTTON = "Open file..."
+OPEN_DIALOG_TITLE = "Open an email file"
 
 STATUS_READY = "Ready. Paste an email and click Analyse."
 STATUS_ANALYSING = "Analysing: the explanation runs LIME, so this takes a moment."
 STATUS_DONE = "Analysis complete."
 
 VERDICT_PLACEHOLDER = "No email analysed yet."
+HEADLINE_PLACEHOLDER = "Awaiting analysis"
 EXPLANATION_PLACEHOLDER = (
     "Token highlights appear here after an email is analysed."
 )
 
 LEGEND_PHISHING = "pushed towards phishing"
 LEGEND_LEGITIMATE = "pushed towards legitimate"
+
+SIGNALS_PHISHING = "Towards phishing"
+SIGNALS_LEGITIMATE = "Towards legitimate"
+SIGNALS_EMPTY = "none yet"
+
+# API status indicator in the header.
+API_CHECKING = "API: checking..."
+API_ONLINE = "API online"
+API_LOADING = "API up : model still loading"
+API_OFFLINE = "API offline : run python run_api.py"
 
 # The report makes this same claim, so the app has to match it.
 CAUTION = (
@@ -30,6 +48,29 @@ CAUTION = (
 )
 
 EMPTY_INPUT = "Enter some email text before clicking Analyse."
+CLIPBOARD_EMPTY = "The clipboard holds no text to paste."
+FILE_LOADED = "Loaded {name}. Click Analyse when ready."
+FILE_UNREADABLE = "Could not read {name}: {detail}"
+
+
+def format_word_count(text: str) -> str:
+    """Render the input's size under the text area.
+
+    Inputs: text : the current input.
+    Output: e.g. "132 words : 811 characters".
+    """
+    stripped = text.strip()
+    words = len(stripped.split()) if stripped else 0
+    return f"{words} words : {len(stripped)} characters"
+
+
+def format_headline(label: str) -> str:
+    """Render the banner headline for a verdict.
+
+    Inputs: label : "phishing" or "legitimate".
+    Output: the banner text.
+    """
+    return "Likely phishing" if label == "phishing" else "Likely legitimate"
 
 # Errors. Each names what failed and what to do about it, never a traceback.
 API_UNREACHABLE = (

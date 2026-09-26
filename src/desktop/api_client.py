@@ -67,7 +67,7 @@ class ApiClient:
 
     Inputs: base_url : where the API is served; timeout : seconds to wait for
     a response before reporting the service unreachable.
-    Output: an ApiClient exposing `explain`.
+    Output: an ApiClient exposing `explain` and `health`.
     """
 
     def __init__(self, base_url: str, timeout: float) -> None:
@@ -87,6 +87,27 @@ class ApiClient:
         """
         payload = self._post("/explain", text)
         return self._parse_explain(payload)
+
+    def health(self, timeout: float = 2.0) -> bool:
+        """Ask the API whether it is up and has finished loading the model.
+
+        Uses its own short timeout: this runs on a polling cycle and must not
+        tie up a thread for the full /explain timeout.
+
+        Inputs: timeout : seconds to wait for /health.
+        Output: True when the model is loaded, False while it is still
+        loading. Raises ApiError when the API cannot be reached or answers
+        with an error.
+        """
+        url = f"{self.base_url}/health"
+        try:
+            response = requests.get(url, timeout=timeout)
+            response.raise_for_status()
+            return bool(response.json().get("model_loaded", False))
+        except (requests.RequestException, ValueError, AttributeError) as error:
+            raise ApiError(
+                messages.API_UNREACHABLE.format(url=self.base_url)
+            ) from error
 
     def _post(self, path: str, text: str) -> dict:
         """POST text to an endpoint and return the decoded JSON body.

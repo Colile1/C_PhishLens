@@ -7,7 +7,7 @@ all: it sends text to the FastAPI service and renders what comes back.
 Keeping the model out of this folder is what lets the app be judged on whether
 it works, and lets the model be tested without a GUI.
 
-## Planned files
+## Files
 
 | File | Responsibility |
 |------|----------------|
@@ -15,6 +15,13 @@ it works, and lets the model be tested without a GUI.
 | `api_client.py` | `predict(text: str) -> Prediction` and `explain(text: str) -> list[TokenWeight]` : HTTP calls to the service, with timeouts, and errors translated into readable messages. The only file in this folder that knows the API exists |
 | `highlight.py` | `render_attributions(widget, text: str, weights: list[TokenWeight]) -> None` : paints token backgrounds by attribution sign and magnitude in a Tkinter `Text` widget. Pure rendering, no HTTP |
 | `messages.py` | User-facing strings in one place: verdict wording, error text, the caution line that the model is an aid and not a decision |
+| `theme.py` | Palette, fonts, ttk styles, and Windows high-DPI awareness so text renders sharp on scaled displays |
+| `header_bar.py` | Title bar with a live API status indicator (polls `/health`; click to re-check) |
+| `input_panel.py` | Input card: text area, word count, Paste / Open file / Clear / Analyse (Ctrl+Enter) |
+| `results_panel.py` | Right-hand pane: verdict card, caution line, highlighted explanation, strongest signals |
+| `verdict_card.py` | Coloured verdict banner and probability meter with the decision threshold marked |
+| `signals_panel.py` / `signals.py` | The strongest tokens each way; `signals.py` is the pure ranking logic |
+| `email_file.py` | Reads a `.eml` as subject and body only (headers dropped: they are the artefact trap) or a `.txt` verbatim |
 
 ## Behaviour it must get right
 
