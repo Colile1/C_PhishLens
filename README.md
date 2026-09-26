@@ -42,21 +42,49 @@ next to the headline number.
 | `artifacts/` | Trained models, per-epoch metric CSVs, saved figures : none committed |
 | `scripts/` | Small operational helpers (download, smoke test) |
 
-## Quick start (once built)
+## Quick start
+
+Reading the results needs nothing but the repository: every notebook is
+committed with its outputs, and every metric the report quotes is in
+`artifacts/metrics/`.
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate            # Windows;  source .venv/bin/activate on Linux
+.venv\Scriptsctivate            # Windows;  source .venv/bin/activate on Linux
 pip install -r requirements.txt
 
 pytest -q                          # all tests
 pytest tests/critical -q           # the guards
 
 jupyter lab notebooks/             # read the results without running anything
-
-python run_api.py                  # FastAPI on http://127.0.0.1:8000
-python run_app.py                  # Tkinter client, in a second terminal
 ```
+
+On a fresh clone without `data/`, the split-integrity and corpus-probe guards
+skip with a message naming the missing file; the data steps below make them
+run in full. `python scripts/check_notebooks.py` confirms every notebook has
+visible outputs and that only `04_evaluate.ipynb` evaluates the test split.
+
+Running the API and the desktop app needs the trained model, which is not
+committed (`artifacts/README.md`). To rebuild it:
+
+```bash
+python scripts/download_data.py    # Kaggle corpora into data/raw/ (needs a Kaggle API token)
+python scripts/build_splits.py     # dedup + grouped train/validation/test split
+jupyter nbconvert --to notebook --execute --inplace notebooks/03_train_cnn.ipynb
+```
+
+Then, in two terminals:
+
+```bash
+python run_api.py                  # FastAPI on http://127.0.0.1:8000
+python run_app.py                  # Tkinter client
+```
+
+Paste an email (or open a `.eml` / `.txt` file) and press **Analyse** or
+Ctrl+Enter. The app shows the verdict with its probability and decision
+threshold, highlights the tokens that pushed towards each class, and lists the
+strongest signals. Screenshots: `docs/report/desktop-analysed-phishing.png`
+and `docs/report/desktop-api-down.png`.
 
 ## Reproducibility contract
 
@@ -79,7 +107,8 @@ notebook, once, at the end.
 
 ## Status
 
-repository pushed to GitHub. No application code written yet. Start at build
-
-
-from the repository root.
+All build steps through 15 are complete: data pipeline with content-hash
+dedup and grouped splitting, the corpus probe and leave-one-corpus-out
+evaluation, M0 (TF-IDF + logistic regression) and M1 (Text-CNN with
+patience-based early stopping), LIME explanations, the FastAPI service, the
+Tkinter desktop client, and the four-section theory report in `docs/report/`.
