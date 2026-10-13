@@ -64,20 +64,22 @@ skip with a message naming the missing file; the data steps below make them
 run in full. `python scripts/check_notebooks.py` confirms every notebook has
 visible outputs and that only `04_evaluate.ipynb` evaluates the test split.
 
-Running the API and the desktop app needs the trained model, which is not
-committed (`artifacts/README.md`). To rebuild it:
+The trained model is committed (`artifacts/models/text_cnn_best.pt` and
+`vocabulary.json`), so the API and the desktop app run straight from a clone.
+In two terminals:
+
+```bash
+python run_api.py                  # FastAPI on http://127.0.0.1:8000
+python run_app.py                  # Tkinter client
+```
+
+To rebuild the data and retrain from scratch instead (the retrained weights
+come out identical to the committed ones):
 
 ```bash
 python scripts/download_data.py    # Kaggle corpora into data/raw/ (needs a Kaggle API token)
 python scripts/build_splits.py     # dedup + grouped train/validation/test split
 jupyter nbconvert --to notebook --execute --inplace notebooks/03_train_cnn.ipynb
-```
-
-Then, in two terminals:
-
-```bash
-python run_api.py                  # FastAPI on http://127.0.0.1:8000
-python run_app.py                  # Tkinter client
 ```
 
 Paste an email (or open a `.eml` / `.txt` file) and press **Analyse** or
