@@ -188,12 +188,15 @@ def test_manifest_matches_the_files(config, splits, pooled):
         )
 
 
-def test_manifest_config_hash_matches_current_config(config):
+def test_manifest_config_hash_matches_current_config(config, splits):
     """The split on disk was drawn from the config currently in the repo.
 
     If a split-determining field changed since the draw, the split is stale
     and every downstream number must be regenerated. Failing here is the only
     thing that makes that visible.
+
+    Takes `splits` only for its skip: on a clone without data/processed/ this
+    skips with the build instruction instead of erroring on the manifest.
     """
     manifest = load_split(config).manifest
     expected = config_hash(config)
@@ -207,12 +210,12 @@ def test_manifest_config_hash_matches_current_config(config):
     )
 
 
-def test_manifest_records_grouped_and_stratified_draw(config):
+def test_manifest_records_grouped_and_stratified_draw(config, splits):
     """The manifest states the split was grouped by content hash on the seed.
 
     Guards against a future session quietly replacing the grouped draw with a
     plain random one, which would pass every disjointness check above while
-    leaking near-duplicates.
+    leaking near-duplicates. Takes `splits` only for its skip, as above.
     """
     manifest = load_split(config).manifest
     processed_dir = Path(config.paths.processed)
