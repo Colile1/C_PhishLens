@@ -1,0 +1,14 @@
+# .dockerignore
+# Purpose: keep data, environments and notebooks out of local Docker build contexts.
+# Author: Colile Sibanda
+
+.git
+.venv
+data
+notebooks
+docs
+artifacts/figures
+artifacts/models/loco*
+**/__pycache__
+*.egg-info
+.env

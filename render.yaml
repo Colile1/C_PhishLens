@@ -1,0 +1,13 @@
+# render.yaml
+# Purpose: Render Blueprint for the hosted PhishLens API and browser UI.
+# Author: Colile Sibanda
+
+services:
+  - type: web
+    name: phishlens
+    runtime: docker
+    plan: free
+    dockerfilePath: ./deploy/render/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true

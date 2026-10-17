@@ -9,7 +9,7 @@ import shutil
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DEPLOY_DIR = REPO_ROOT / "deploy" / "huggingface"
+DEPLOY_DIR = REPO_ROOT / "deploy"
 
 # Everything the image needs, and nothing else: no data, notebooks or
 # scaffolding leave the machine.
@@ -22,10 +22,10 @@ FILES = (
     "artifacts/metrics/m1_text_cnn.json",
 )
 DEPLOY_FILES = {
-    "Dockerfile": "Dockerfile",
-    "README.md": "README.md",
+    "huggingface/Dockerfile": "Dockerfile",
+    "huggingface/README.md": "README.md",
     "requirements-serve.txt": "requirements-serve.txt",
-    "local.yaml": "configs/local.yaml",
+    "huggingface/local.yaml": "configs/local.yaml",
 }
 
 
