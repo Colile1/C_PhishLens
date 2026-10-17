@@ -1,0 +1,10 @@
+# local.yaml : C_PhishLens (hosted)
+# Purpose: config override copied into configs/ inside the Space image.
+# Author: Colile Sibanda
+#
+# The config loader deep-merges this over default.yaml, so only the bind
+# address changes: listen on every interface, on the port Spaces expects.
+
+serving:
+  host: 0.0.0.0
+  port: 7860

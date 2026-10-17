@@ -1,0 +1,16 @@
+# requirements-serve.txt : C_PhishLens
+# Purpose: what the API needs at run time, pinned to the versions in requirements.txt.
+# Author: Colile Sibanda
+#
+# torch is installed separately in the Dockerfile from the CPU-only index.
+
+fastapi==0.141.1
+starlette==1.6.0
+uvicorn==0.52.4
+pydantic==2.13.5
+numpy==2.4.6
+pandas==3.0.5
+scipy==1.17.1
+scikit-learn==1.9.1
+lime==0.2.0.1
+PyYAML==6.0.3

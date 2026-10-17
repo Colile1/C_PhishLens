@@ -34,6 +34,12 @@ def test_ui_root_serves_the_analyse_page(client: TestClient) -> None:
     assert "Check an email" in response.text
 
 
+def test_site_root_redirects_to_the_ui(client: TestClient) -> None:
+    response = client.get("/", follow_redirects=False)
+    assert response.status_code == 307
+    assert response.headers["location"] == "/ui/"
+
+
 @pytest.mark.parametrize("page", PAGES)
 def test_every_asset_a_page_references_is_served(client: TestClient, page: str) -> None:
     html = client.get(f"/ui/{page}")

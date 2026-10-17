@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from phishlens.config.schema import Config
@@ -33,7 +34,9 @@ def create_app(config: Config) -> FastAPI:
     503 via `ModelNotLoadedError` until it is fixed and the process restarted.
 
     The browser front end in `src/web/` is mounted as static files at
-    `/ui/` when that folder exists; it adds no endpoint to the four.
+    `/ui/` when that folder exists, and `/` redirects there so a hosted link
+    opens the UI. Neither appears in the OpenAPI schema;
+    the API still has exactly its four endpoints.
 
     Inputs: config : validated Config.
     Output: a FastAPI instance ready to be served by `run_api.py` or wrapped
@@ -52,4 +55,14 @@ def create_app(config: Config) -> FastAPI:
     register_error_handlers(app)
     if WEB_DIR.is_dir():
         app.mount(WEB_MOUNT, StaticFiles(directory=WEB_DIR, html=True), name="web")
+        app.add_api_route("/", _redirect_to_ui, include_in_schema=False)
     return app
+
+
+def _redirect_to_ui() -> RedirectResponse:
+    """Send a visitor at the site root to the browser UI.
+
+    Inputs: none.
+    Output: a 307 redirect to `/ui/`.
+    """
+    return RedirectResponse(url=f"{WEB_MOUNT}/")
