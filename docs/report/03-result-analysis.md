@@ -179,17 +179,20 @@ The LIME analysis (`notebooks/06_xai.ipynb`,
 positive is the informative one.
 
 On a legitimate message that both models flagged, M0 assigned P(phishing) = 0.8661
-and M1 assigned 1.0. The tokens driving both models agreed strongly, with a
-Jaccard overlap of 0.7647 across 13 shared tokens: *about, dear, for,
-information, korean, macintosh, madam, please*.
+and M1 assigned 1.0. The message is a short request from the Ling corpus: "korean
+software for macintosh dear sir / madam , would you please send me any
+information about korean software for macintosh". The tokens the two models
+attended to overlapped strongly (Jaccard 0.7647, 13 shared tokens), and the signs
+say what drove the verdict. For M1 the strongest pushes towards phishing were
+*madam*, *software*, *sir*, *dear* and *you*. The topical words *korean* and
+*macintosh*, and the polite *please*, pushed the other way, towards legitimate.
 
 This is the artefact of section 3.3 made visible at the level of a single email.
 The model did not flag this message for anything resembling a phishing
-technique. It flagged it for the formal salutation "dear ... madam", for
-"please" and "information", and for the topical words *korean* and *macintosh*.
-Those are the register of a polite formal request and the vocabulary of a
-particular corpus and era, not the mechanics of a lure. A message is being
-penalised for being courteous and for its subject matter.
+technique. It flagged it for the salutation "dear sir / madam", a formal opening
+to an unknown reader, and it did so strongly enough to override the topical
+words that correctly pointed to a legitimate request. A message is being
+penalised for its courtesy.
 
 That both an independently trained linear model and a CNN converge on the same
 tokens indicates the problem is in the data, not in either architecture. The
@@ -204,6 +207,33 @@ confident predictions are therefore not stable enough to present to an analyst
 as a definitive reason, and the desktop application's highlighting should be
 read as indicative. Predicted probabilities were identical across seeds
 (spread 0.0), so the instability is in the local explanation, not the model.
+
+The explanations were cross-checked with Integrated Gradients (Sundararajan,
+Taly & Yan, 2017), computed through Captum (Kokhlikyan et al., 2020) at M1's
+embedding layer against an all-padding baseline (`notebooks/06_xai.ipynb`,
+`artifacts/metrics/xai_ig_agreement.json`). Unlike LIME it uses the network's own
+gradients and has no sampling step, and its attributions sum to the difference
+between the email's logit and the baseline's; that completeness property held on
+every case, with a largest error of 0.0138. Three results matter.
+
+First, it confirms the false-positive reading with a method built on different
+principles: *madam* alone accounts for 75.3% of the logit gap and *sir* for
+40.5% (shares exceed 100% in total because other tokens pull the other way),
+while *macintosh* and *korean* push towards legitimate, as LIME found. Second,
+it puts a number on the corpus artefact inside a single prediction: on the
+confidently legitimate Enron email, the token *enron* alone carries 77.5% of the
+logit gap. The model is certain that email is legitimate mainly because it names
+the archive it came from. Third, the two methods agree where an email is short
+(top-k Jaccard 0.7647 and 1.0 on the false positive and borderline cases) and
+diverge on long ones (0.2 and 0.1111), which are exactly the cases where M1's
+LIME explanations were unstable across seeds (0.1538 on both). On the
+1 030-token advance-fee email, of which M1 reads the first 400 tokens, Integrated
+Gradients attributes the verdict to *thousand*, *money*, *country*, *dollars*
+and *million*, a more plausible account than LIME's *god's*, *vos* and *trust*.
+Where the methods share a token they agree on its direction 96.43% of the time
+on average. The highlighting in the application therefore stays LIME, as
+designed, but its reading on long emails should be treated with the caution the
+stability result already implies.
 
 ## 3.6 Verdict: is the model effective?
 
@@ -225,7 +255,7 @@ Recall on unseen real-world phishing from the Nazario collection is 0.5202.
 A new campaign, from a sender and in a register the pooled corpora do not
 contain, is the case the LOCO numbers simulate, and it is the case the model
 handles worst. The false-positive analysis shows the model attending to
-politeness and topic rather than to technique, which is the mechanism behind
+politeness and corpus vocabulary rather than to technique, which is the mechanism behind
 that failure rather than a separate problem.
 
 The honest conclusion is that the headline number measures the benchmark and the
@@ -238,5 +268,12 @@ this implies for machine learning in security operations generally.
 - Bhuiyan, I. & Bhuiyan, T. 2026. The fragility of phishing detection models:
   evidence from cross-corpus transfer, prevalence shift, artifact learning, and
   evasion risk. *Big Data and Cognitive Computing*, 10(7):211.
+- Kokhlikyan, N., Miglani, V., Martin, M., Wang, E., Alsallakh, B., Reynolds, J.,
+  Melnikov, A., Kliushkina, N., Araya, C., Yan, S. & Reblitz-Richardson, O. 2020.
+  Captum: a unified and generic model interpretability library for PyTorch.
+  arXiv:2009.07896.
 - Ribeiro, M.T., Singh, S. & Guestrin, C. 2016. "Why should I trust you?":
   explaining the predictions of any classifier. *Proceedings of KDD 2016*.
+- Sundararajan, M., Taly, A. & Yan, Q. 2017. Axiomatic attribution for deep
+  networks. *Proceedings of the 34th International Conference on Machine
+  Learning*. PMLR 70, pp. 3319-3328.

@@ -115,6 +115,25 @@ https://arxiv.org/abs/1705.07874
 
 *Only needed if SHAP is used as the cross-check instead of Captum.*
 
+**R9 : verified.** (2026-10-18: title, authors, volume and pages confirmed on
+the PMLR proceedings page.)
+Sundararajan, M., Taly, A. & Yan, Q. 2017. Axiomatic attribution for deep
+networks. *Proceedings of the 34th International Conference on Machine
+Learning*. PMLR 70, pp. 3319-3328.
+https://proceedings.mlr.press/v70/sundararajan17a.html
+
+*Why it matters here:* Integrated Gradients, the M1 cross-check. Cite for the baseline, the path integral and the completeness property
+the implementation checks.
+
+**R10 : verified.** (2026-10-18: title and author list confirmed on arXiv.)
+Kokhlikyan, N., Miglani, V., Martin, M., Wang, E., Alsallakh, B., Reynolds, J.,
+Melnikov, A., Kliushkina, N., Araya, C., Yan, S. & Reblitz-Richardson, O. 2020.
+Captum: a unified and generic model interpretability library for PyTorch.
+arXiv:2009.07896. https://arxiv.org/abs/2009.07896
+
+*Why it matters here:* the library the Integrated Gradients implementation
+uses (`LayerIntegratedGradients`).
+
 ---
 
 ## Status of the §3.4 reference gap (closed 2026-09-22, the build)

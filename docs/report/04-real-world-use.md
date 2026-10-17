@@ -162,7 +162,7 @@ corporate mail stream, or for any workflow where its output reaches a customer
 without a person in between. The evidence is this project's own: corpus-probe
 accuracy of 0.9445, cross-corpus macro-F1 as low as 0.7706, recall of 0.5202 on
 unseen real-world phishing, and explanations showing the model responding to
-politeness and topic rather than to phishing technique.
+politeness and corpus vocabulary rather than to phishing technique.
 
 Were it to be deployed, three things would be required before and not after: a
 retraining pipeline with drift monitoring, a calibration of the threshold at
