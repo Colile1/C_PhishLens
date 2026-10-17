@@ -163,7 +163,7 @@ class ExplainConfig:
     """XAI configuration for the LIME wrapper and stability check.
 
     Inputs: method name, tokens shown per explanation, LIME sample count,
-    stability-check seeds.
+    stability-check seeds, Integrated Gradients path steps.
     Output: immutable ExplainConfig.
     """
 
@@ -171,6 +171,7 @@ class ExplainConfig:
     num_features: int
     num_samples: int
     stability_seeds: tuple[int, ...]
+    ig_steps: int
 
 
 @dataclass(frozen=True)

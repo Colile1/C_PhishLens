@@ -84,6 +84,7 @@ VALID_CONFIG: dict = {
         "num_features": 15,
         "num_samples": 1000,
         "stability_seeds": [42, 1337],
+        "ig_steps": 64,
     },
     "serving": {
         "host": "127.0.0.1",
@@ -129,6 +130,13 @@ def test_non_positive_patience_is_rejected():
     raw = copy.deepcopy(VALID_CONFIG)
     raw["training"]["early_stopping"]["patience"] = 0
     with pytest.raises(ConfigError, match="patience"):
+        validate(raw)
+
+
+def test_non_positive_ig_steps_is_rejected():
+    raw = copy.deepcopy(VALID_CONFIG)
+    raw["explain"]["ig_steps"] = 0
+    with pytest.raises(ConfigError, match="ig_steps"):
         validate(raw)
 
 

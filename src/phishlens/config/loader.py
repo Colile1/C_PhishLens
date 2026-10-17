@@ -127,6 +127,7 @@ def _build_config(raw: dict[str, Any]) -> Config:
         num_features=explain_raw["num_features"],
         num_samples=explain_raw["num_samples"],
         stability_seeds=tuple(explain_raw["stability_seeds"]),
+        ig_steps=explain_raw["ig_steps"],
     )
 
     serving = ServingConfig(**raw["serving"])

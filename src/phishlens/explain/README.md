@@ -14,6 +14,8 @@ during the demo.
 | `lime_explainer.py` | `explain_text(text, predict_fn, config, seed=None) -> Explanation` : wrap `LimeTextExplainer`, seeded from config so an explanation is reproducible. Explains the **normalised** text with the project tokeniser as LIME's `split_expression` |
 | `attributions.py` | `align_to_tokens(text, weights) -> list[TokenWeight]` : map LIME's per-word-type weights onto every token occurrence in the explained text, in order, with character offsets. Driven by the text's own tokens, never by the weight map : the off-by-one this file exists to prevent. Also `top_tokens`, ranking by absolute weight so evidence for *legitimate* is not hidden |
 | `stability.py` | `stability_report(text, predict_fn, config, seeds=None) -> StabilityReport` : explain one email under each seed in `config.explain.stability_seeds` and report the top-k Jaccard overlap, the agreed tokens and the probability spread. Low overlap is a finding for the report, not something to hide |
+| `integrated_gradients.py` | `integrated_gradients(text, model, vocabulary, config) -> IGExplanation` : Captum `LayerIntegratedGradients` on M1's embedding layer against the all-`<pad>` baseline. Same sign convention and the same offsets as LIME (scores attached by encoder position via `align_to_tokens`). Refuses a result that leaks attribution onto padding or fails completeness. Notebook cross-check only: `/explain` stays LIME, and this module is not exported from `__init__` so the API does not import Captum |
+| `method_agreement.py` | `method_agreement(lime, ig) -> MethodAgreement` : top-k Jaccard and sign agreement between LIME and IG for the same email, compared per word type (IG summed over occurrences, since LIME scores types) |
 
 ## Rules
 
@@ -37,4 +39,7 @@ another, the `<url>`/`<num>` placeholders) by
 `tests/critical/test_attribution_alignment.py` and re-asserted on real emails
 inside `notebooks/06_xai.ipynb`; a known phishing email attributes to
 plausible lure tokens; and the stability report is recorded for four emails
-under two models in `artifacts/metrics/xai_stability.json`.
+under two models in `artifacts/metrics/xai_stability.json`. The IG
+cross-check is proved by `tests/critical/test_ig_alignment.py` (a planted-token
+model where every non-planted token must score exactly zero) and its agreement
+with LIME is recorded in `artifacts/metrics/xai_ig_agreement.json`.

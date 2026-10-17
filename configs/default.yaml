@@ -91,6 +91,7 @@ explain:
   num_features: 15            # tokens shown per explanation
   num_samples: 1000           # LIME perturbations per explanation
   stability_seeds: [42, 1337] # same email, two seeds, compared at step 12
+  ig_steps: 64                # Integrated Gradients path steps (M1 cross-check, the design)
 
 serving:
   host: 127.0.0.1

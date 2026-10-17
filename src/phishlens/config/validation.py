@@ -74,7 +74,7 @@ _REQUIRED_EARLY_STOPPING = (
 
 _REQUIRED_EVALUATION = ("decision_threshold", "figure_dpi")
 
-_REQUIRED_EXPLAIN = ("method", "num_features", "num_samples", "stability_seeds")
+_REQUIRED_EXPLAIN = ("method", "num_features", "num_samples", "stability_seeds", "ig_steps")
 
 _REQUIRED_SERVING = ("host", "port", "model_file", "max_input_characters")
 
@@ -176,6 +176,11 @@ def validate(raw: dict[str, Any]) -> None:
         )
 
     _require_fields(raw["explain"], _REQUIRED_EXPLAIN, "explain")
+    ig_steps = raw["explain"]["ig_steps"]
+    if not isinstance(ig_steps, int) or isinstance(ig_steps, bool) or ig_steps <= 0:
+        raise ConfigError(
+            f"Config field 'explain.ig_steps' must be a positive integer, got {ig_steps!r}."
+        )
 
     _require_fields(raw["serving"], _REQUIRED_SERVING, "serving")
     if not (0 < raw["serving"]["port"] < 65536):
