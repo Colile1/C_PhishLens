@@ -1,0 +1,95 @@
+<!-- index.html - Analyse page: paste an email, get a verdict and the
+     tokens that drove it. Author: Colile Sibanda -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analyse - PhishLens</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="static/css/theme.css">
+</head>
+<body>
+  <header class="app-bar">
+    <span class="app-name">PhishLens</span>
+    <span class="breadcrumb">Analyse</span>
+  </header>
+
+  <div class="shell">
+    <nav class="nav-rail">
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation">Menu</button>
+      <ul>
+        <li><a href="index.html" class="active">Analyse</a></li>
+        <li><a href="model.html">Model</a></li>
+        <li class="nav-divider"><span>Help</span></li>
+        <li><a href="guide.html">User guide</a></li>
+      </ul>
+    </nav>
+
+    <main class="content">
+      <div class="card">
+        <div class="card-head">
+          <p class="card-title">Check an email</p>
+          <span id="pulse" class="pulse idle">API: checking...</span>
+        </div>
+        <p class="card-body">
+          Paste the subject and body of an email. The model reads the text
+          only: headers, sender and links are not used. It returns a verdict,
+          a probability and the words that pushed it each way.
+        </p>
+        <textarea id="email" class="email-input" spellcheck="false"
+                  aria-label="Email subject and body"
+                  placeholder="Subject and body of the email"></textarea>
+        <div class="action-row">
+          <button id="analyse" class="btn-primary" type="button">Analyse email</button>
+          <button id="example" class="btn-secondary" type="button">Load an example</button>
+          <button id="clear" class="btn-secondary" type="button">Clear</button>
+          <span id="count" class="hint">0 words, 0 characters</span>
+        </div>
+        <div id="page-banner"></div>
+      </div>
+
+      <div class="card" id="result-card" hidden>
+        <p class="card-title">Verdict</p>
+        <div id="verdict"></div>
+        <div id="meter"></div>
+        <p class="hint">
+          This model assists triage: it does not decide. An analyst confirms
+          every verdict, and the highlights explain this one prediction only.
+        </p>
+      </div>
+
+      <div class="card" id="why-card" hidden>
+        <p class="card-title">Why the model decided this</p>
+        <p class="card-body">
+          Each word is shaded by how much it moved this prediction. Hover a
+          word to see its weight. The text is shown as the model saw it:
+          lower case, with links, addresses and numbers replaced by
+          placeholders.
+        </p>
+        <div class="token-key">
+          <span><span class="tok-p s4">solid red underline</span> pushed towards phishing</span>
+          <span><span class="tok-l s4">dotted blue underline</span> pushed towards legitimate</span>
+        </div>
+        <div id="tokens" class="token-view"></div>
+        <div id="method"></div>
+      </div>
+
+      <div class="card" id="signals-card" hidden>
+        <p class="card-title">Strongest signals</p>
+        <p class="card-body">
+          The words with the largest weight each way. A word that appears
+          more than once is listed under its strongest occurrence.
+        </p>
+        <div id="signals"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="static/js/common.js"></script>
+  <script src="static/js/charts.js"></script>
+  <script src="static/js/health.js"></script>
+  <script src="static/js/tokens.js"></script>
+  <script src="static/js/analyse.js"></script>
+</body>
+</html>

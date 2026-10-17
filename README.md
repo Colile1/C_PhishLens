@@ -36,6 +36,7 @@ next to the headline number.
 | `notebooks/` | The executable record: audit, baseline, training, evaluation, LOCO, XAI |
 | `src/phishlens/` | Core library : config, data, features, models, training, evaluation, explain, serving |
 | `src/desktop/` | Tkinter presentation layer |
+| `src/web/` | Browser front end, served by the API at `/ui/` |
 | `tests/unit/` | Unit tests for the core library |
 | `tests/critical/` | The guards: split integrity, corpus probe, metric correctness |
 | `data/` | `raw/` downloaded corpora, `interim/` cleaned, `processed/` split files : none committed |
@@ -71,6 +72,7 @@ In two terminals:
 ```bash
 python run_api.py                  # FastAPI on http://127.0.0.1:8000
 python run_app.py                  # Tkinter client
+# browser UI: open http://127.0.0.1:8000/ui/ while the API runs
 ```
 
 To rebuild the data and retrain from scratch instead (the retrained weights
@@ -87,6 +89,10 @@ Ctrl+Enter. The app shows the verdict with its probability and decision
 threshold, highlights the tokens that pushed towards each class, and lists the
 strongest signals. Screenshots: `docs/report/desktop-analysed-phishing.png`
 and `docs/report/desktop-api-down.png`.
+
+The same flow runs in a browser: with the API started, open
+`http://127.0.0.1:8000/ui/`. It calls the same `/explain` endpoint and adds a
+Model page (provenance from `/metadata`) and a user guide. See `src/web/README.md`.
 
 ## Reproducibility contract
 

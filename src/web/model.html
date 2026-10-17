@@ -1,0 +1,65 @@
+<!-- model.html - Model page: which model is being served and where it
+     came from, read live from /metadata. Author: Colile Sibanda -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Model - PhishLens</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="static/css/theme.css">
+</head>
+<body>
+  <header class="app-bar">
+    <span class="app-name">PhishLens</span>
+    <span class="breadcrumb">Model</span>
+  </header>
+
+  <div class="shell">
+    <nav class="nav-rail">
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation">Menu</button>
+      <ul>
+        <li><a href="index.html">Analyse</a></li>
+        <li><a href="model.html" class="active">Model</a></li>
+        <li class="nav-divider"><span>Help</span></li>
+        <li><a href="guide.html">User guide</a></li>
+      </ul>
+    </nav>
+
+    <main class="content">
+      <div class="card">
+        <div class="card-head">
+          <p class="card-title">The model behind the verdicts</p>
+          <span id="pulse" class="pulse idle">API: checking...</span>
+        </div>
+        <p class="card-body">
+          PhishLens serves a Text-CNN: a small neural network that reads the
+          words of an email in order and learns short phrases that mark
+          phishing. The details below come from the running API, so a
+          screenshot of a verdict can be traced to the exact run that
+          produced the model.
+        </p>
+        <div id="page-banner"></div>
+        <dl id="metadata" class="detail-list"></dl>
+      </div>
+
+      <div class="card">
+        <p class="card-title">What it can and cannot tell you</p>
+        <p class="prose">
+          The model was trained on six public email collections pooled
+          together. It reads the subject and body only: headers, sender
+          domains and link counts are left out on purpose, because they let
+          a model recognise which collection an email came from instead of
+          whether it is phishing.
+        </p>
+        <div id="limits"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="static/js/common.js"></script>
+  <script src="static/js/charts.js"></script>
+  <script src="static/js/health.js"></script>
+  <script src="static/js/model.js"></script>
+</body>
+</html>

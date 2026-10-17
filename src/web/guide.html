@@ -1,0 +1,76 @@
+<!-- guide.html - User guide: how to use the Analyse page and what its
+     terms mean. Static text only. Author: Colile Sibanda -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User guide - PhishLens</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="static/css/theme.css">
+</head>
+<body>
+  <header class="app-bar">
+    <span class="app-name">PhishLens</span>
+    <span class="breadcrumb">User guide</span>
+  </header>
+
+  <div class="shell">
+    <nav class="nav-rail">
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation">Menu</button>
+      <ul>
+        <li><a href="index.html">Analyse</a></li>
+        <li><a href="model.html">Model</a></li>
+        <li class="nav-divider"><span>Help</span></li>
+        <li><a href="guide.html" class="active">User guide</a></li>
+      </ul>
+    </nav>
+
+    <main class="content">
+      <div class="card">
+        <p class="card-title">How to check an email</p>
+        <ol class="guide-steps">
+          <li>Start the API from the project folder with <code>python run_api.py</code>, then open this page at <code>http://127.0.0.1:8000/ui/</code>.</li>
+          <li>On Analyse, paste the subject line and the body of the email. Leave out the headers: the model does not use them.</li>
+          <li>Click Analyse email, or press Ctrl+Enter. The explanation takes a few seconds.</li>
+          <li>Read the verdict first, then the highlighted words, to judge whether the reasons make sense for this email.</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <p class="card-title">Reading the result</p>
+        <div class="guide-page">
+          <h3>The verdict is a suggestion</h3>
+          <p class="prose">The model assists triage: it does not decide. Treat a verdict whose highlighted words do not make sense as a reason to look closer, not as an answer.</p>
+        </div>
+        <div class="guide-page">
+          <h3>Terms</h3>
+          <dl class="glossary">
+            <dt>Probability</dt>
+            <dd>How likely the model thinks the email is phishing, from 0 to 1.</dd>
+            <dt>Decision threshold</dt>
+            <dd>The probability at or above which an email is called phishing. It was chosen on validation data, never on the test set.</dd>
+            <dt>Weight</dt>
+            <dd>How much one word moved this prediction. Positive weights pushed towards phishing, negative towards legitimate.</dd>
+            <dt>LIME</dt>
+            <dd>The explanation method. It removes words at random, watches how the score changes, and fits a simple model to those changes. The weights describe this one email, not the model in general.</dd>
+            <dt>Placeholders</dt>
+            <dd>Links, email addresses and numbers are replaced by &lt;url&gt;, &lt;email&gt; and &lt;num&gt; before the model reads the text, so the highlighted text shows these instead of the originals.</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">If something goes wrong</p>
+        <ul class="plain-list">
+          <li>"API offline" in the top card: the API is not running. Start it with <code>python run_api.py</code> and reload.</li>
+          <li>"model still loading": wait a few seconds; the badge updates on its own.</li>
+          <li>A message about the text being too long: the API states its own character limit; shorten the email to the body that matters.</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+
+  <script src="static/js/common.js"></script>
+</body>
+</html>
