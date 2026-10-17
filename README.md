@@ -3,7 +3,6 @@
 **Project:** ITRI625 Machine Learning project : North-West University, Semester 2, 2026
 **Author:** Colile Sibanda
 **Repository:** https://github.com/Colile1/C_PhishLens
-**Deadline:** _TBD in the brief : confirm and record here_
 
 A deep learning classifier that decides whether an email is phishing or
 legitimate from its subject and body text alone, and returns the tokens that
@@ -112,6 +111,9 @@ notebook, once, at the end.
 - Vectorisers and vocabularies are fitted on training data only.
 - Reported test metrics come from the restored best-epoch weights, never the last epoch.
 - Notebooks are committed with outputs, re-run from a clean kernel whenever `src/` changes.
+- Model code lives in `src/phishlens/` so it is tested and shared with the API, and is printed
+  into the notebooks with `inspect.getsource`: the `TextCNN` class and the `train` loop
+  (patience and best-weight restore) in `03_train_cnn.ipynb`, the attribution code in `06_xai.ipynb`.
 
 ## Status
 
