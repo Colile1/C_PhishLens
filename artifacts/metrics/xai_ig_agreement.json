@@ -1,0 +1,225 @@
+{
+  "baseline": "all <pad> (zero embedding)",
+  "commit": "099dd243596fa98094809253892ed7a049b7b04a",
+  "emails_explained": 4,
+  "ig_steps": 64,
+  "max_completeness_error": 0.013763,
+  "mean_lime_ig_jaccard": 0.519,
+  "mean_sign_agreement": 0.9643,
+  "method": "integrated_gradients",
+  "per_case": [
+    {
+      "LIME/IG jaccard": 0.2,
+      "agreement": {
+        "ig_top": [
+          "thousand",
+          "your",
+          "money",
+          "guardian",
+          "country",
+          "dollars",
+          "million",
+          "united",
+          "hundred",
+          "you",
+          "account",
+          "the",
+          "bank",
+          "so",
+          "i"
+        ],
+        "jaccard": 0.2,
+        "k": 15,
+        "lime_top": [
+          "thousand",
+          "your",
+          "god's",
+          "vos",
+          "account",
+          "trust",
+          "the",
+          "reply",
+          "i",
+          "tell",
+          "each",
+          "decided",
+          "must",
+          "sum",
+          "in"
+        ],
+        "shared": [
+          "thousand",
+          "your",
+          "account",
+          "the",
+          "i"
+        ],
+        "sign_agreement": 1.0
+      },
+      "attribution sum": 17.5087,
+      "case": "Confident phishing (true positive)",
+      "completeness error": 0.001163,
+      "logit gap": 17.5099,
+      "sign agreement": 1.0,
+      "tokens seen": 400
+    },
+    {
+      "LIME/IG jaccard": 0.1111,
+      "agreement": {
+        "ig_top": [
+          "enron",
+          "vince",
+          "kaminski",
+          "j",
+          "beth",
+          "re",
+          "christie",
+          "mulholland",
+          "sarah",
+          "wharton",
+          "hou",
+          "cc",
+          "burns",
+          "lets",
+          "patrick"
+        ],
+        "jaccard": 0.1111,
+        "k": 15,
+        "lime_top": [
+          "crenshaw",
+          "<num>",
+          "mark",
+          "enron",
+          "thanks",
+          "cindy",
+          "meeting",
+          "october",
+          "would",
+          "back",
+          "jennifer",
+          "mulholland",
+          "burns",
+          "am",
+          "fri"
+        ],
+        "shared": [
+          "enron",
+          "mulholland",
+          "burns"
+        ],
+        "sign_agreement": 1.0
+      },
+      "attribution sum": -35.2383,
+      "case": "Confident legitimate (true negative)",
+      "completeness error": 0.013763,
+      "logit gap": -35.2245,
+      "sign agreement": 1.0,
+      "tokens seen": 212
+    },
+    {
+      "LIME/IG jaccard": 0.7647,
+      "agreement": {
+        "ig_top": [
+          "madam",
+          "sir",
+          "dear",
+          "you",
+          "macintosh",
+          "would",
+          "about",
+          "korean",
+          "please",
+          "for",
+          "me",
+          "software",
+          "proceedings",
+          "any",
+          "iatl"
+        ],
+        "jaccard": 0.7647,
+        "k": 15,
+        "lime_top": [
+          "madam",
+          "software",
+          "sir",
+          "iatl",
+          "dear",
+          "you",
+          "for",
+          "macintosh",
+          "please",
+          "about",
+          "information",
+          "send",
+          "would",
+          "korean",
+          "proceedings"
+        ],
+        "shared": [
+          "madam",
+          "software",
+          "sir",
+          "iatl",
+          "dear",
+          "you",
+          "for",
+          "macintosh",
+          "please",
+          "about",
+          "would",
+          "korean",
+          "proceedings"
+        ],
+        "sign_agreement": 1.0
+      },
+      "attribution sum": 11.7835,
+      "case": "False positive : legitimate, flagged",
+      "completeness error": 0.000858,
+      "logit gap": 11.7827,
+      "sign agreement": 1.0,
+      "tokens seen": 21
+    },
+    {
+      "LIME/IG jaccard": 1.0,
+      "agreement": {
+        "ig_top": [
+          "secret",
+          "no",
+          "words",
+          "have",
+          "<url>",
+          "a",
+          "need"
+        ],
+        "jaccard": 1.0,
+        "k": 7,
+        "lime_top": [
+          "have",
+          "no",
+          "secret",
+          "words",
+          "need",
+          "<url>",
+          "a"
+        ],
+        "shared": [
+          "have",
+          "no",
+          "secret",
+          "words",
+          "need",
+          "<url>",
+          "a"
+        ],
+        "sign_agreement": 0.8571
+      },
+      "attribution sum": 0.2351,
+      "case": "Borderline : nearest the threshold",
+      "completeness error": 0.003409,
+      "logit gap": 0.2386,
+      "sign agreement": 0.8571428571428571,
+      "tokens seen": 7
+    }
+  ],
+  "seed": 42
+}
