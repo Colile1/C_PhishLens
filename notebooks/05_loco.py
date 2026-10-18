@@ -385,11 +385,9 @@ if headline_macro_f1 is not None:
     print(f"Gap (headline − LOCO mean): {headline_macro_f1 - loco_mean_macro_f1:.4f}")
 
 # %% [markdown]
-# **The one-sentence generalisation story for the report (fill in after the
-# run above executes and the printed numbers are known):** M1's headline
-# random-split macro-F1 of `{headline_macro_f1}` drops to a LOCO mean of
-# `{loco_mean_macro_f1}` across the four two-class held-out corpora, a gap
-# of `{headline − LOCO mean}` : measured against a corpus-probe accuracy of
-# `{probe_accuracy}`, this quantifies how much of the headline
-# number is genuine phishing signal that transfers to an unseen corpus
-# versus corpus-specific artefact the random split lets the model exploit.
+# **The generalisation story in one sentence.** M1's headline random-split
+# macro-F1 of 0.9871 drops to a LOCO mean of 0.8423 across the four two-class
+# held-out corpora, a gap of 0.1448: measured against a corpus-probe accuracy of
+# 0.9445, this quantifies how much of the headline number is genuine phishing
+# signal that transfers to an unseen corpus versus corpus-specific artefact the
+# random split lets the model exploit.

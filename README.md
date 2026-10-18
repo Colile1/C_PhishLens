@@ -54,6 +54,15 @@ The full analysis is in `docs/report/`. Every number above is in
 - Runs publicly on Render, built from this repository by `render.yaml` and
   `deploy/render/Dockerfile`, with rate limits and security headers.
 
+## Screenshots
+
+The whole project in 34 captioned screenshots, from the data audit to the live
+deployment: [docs/screenshots/](docs/screenshots/README.md).
+
+| Browser UI (live) | Desktop app | Notebook UI |
+|---|---|---|
+| ![Live browser UI with a phishing verdict](docs/screenshots/20-live-ui-phishing-verdict.png) | ![Desktop app flagging a parcel-delivery lure](docs/screenshots/32-desktop-parcel-lure.png) | ![Notebook UI analysing a phishing email](docs/screenshots/17-notebook-ui-phishing.png) |
+
 ## Layout
 
 | Path | Purpose |
@@ -69,7 +78,7 @@ The full analysis is in `docs/report/`. Every number above is in
 | `tests/unit/`, `tests/critical/` | Unit tests, and the guards every reported number depends on |
 | `data/` | `raw/`, `interim/`, `processed/`: none committed, rebuilt by `scripts/` |
 | `artifacts/` | Served model and vocabulary, metric files (committed); figures and LOCO checkpoints (rebuilt) |
-| `docs/` | Dataset card, references, the theory report |
+| `docs/` | Dataset card, references, the theory report, screenshots |
 | `deploy/` | Docker images for hosting (Render; a Hugging Face Space variant) |
 | `scripts/` | Data download, split build, notebook audit, Space packaging |
 
