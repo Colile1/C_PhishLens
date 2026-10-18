@@ -18,7 +18,8 @@ config  →  data  →  features  →  models  →  training  →  evaluation  �
 - `serving` is the **integration layer**: it imports the core and exposes it over
   HTTP. Nothing in the core imports `serving`.
 - `src/desktop/` and `src/web/` sit outside this package and reach the model only
-  through the API.
+  through the API; `src/notebook_ui/` reaches it through the API or through the
+  serving layer's `ModelService`, never through the core directly.
 
 There are no cycles. If a new import would create one, the shared piece belongs
 in `config` or in a new small module, not in a back-reference.

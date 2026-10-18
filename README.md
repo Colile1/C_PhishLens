@@ -48,7 +48,9 @@ The full analysis is in `docs/report/`. Every number above is in
   restores the best weights before the test set is touched.
 - Explains each prediction at token level (LIME), with an Integrated Gradients
   cross-check in the XAI notebook.
-- Serves the model over FastAPI, with a Tkinter desktop client and a browser UI.
+- Serves the model over FastAPI, with a Tkinter desktop client and a browser UI, and
+  runs inside a notebook page too (`notebooks/07_analyst_ui.ipynb`), readable on GitHub
+  and usable in Jupyter with no server.
 - Runs publicly on Render, built from this repository by `render.yaml` and
   `deploy/render/Dockerfile`, with rate limits and security headers.
 
@@ -59,10 +61,11 @@ The full analysis is in `docs/report/`. Every number above is in
 | `run_api.py` | Thin entry point: starts the FastAPI service |
 | `run_app.py` | Thin entry point: starts the Tkinter client |
 | `configs/` | `default.yaml`: seed, paths, split ratios, model, training, serving settings |
-| `notebooks/` | The executable record: audit, baseline, training, evaluation, LOCO, XAI |
+| `notebooks/` | The executable record: audit, baseline, training, evaluation, LOCO, XAI, and the analyst UI page |
 | `src/phishlens/` | Core library: config, data, features, models, training, evaluation, explain, serving |
 | `src/desktop/` | Tkinter client |
 | `src/web/` | Browser UI, served by the API at `/ui/` |
+| `src/notebook_ui/` | Notebook client used by `notebooks/07_analyst_ui.ipynb` |
 | `tests/unit/`, `tests/critical/` | Unit tests, and the guards every reported number depends on |
 | `data/` | `raw/`, `interim/`, `processed/`: none committed, rebuilt by `scripts/` |
 | `artifacts/` | Served model and vocabulary, metric files (committed); figures and LOCO checkpoints (rebuilt) |
@@ -107,6 +110,10 @@ Ctrl+Enter. The verdict comes with its probability and decision threshold, the
 words that pushed towards each class are highlighted, and the strongest signals
 are listed. Screenshots: `docs/report/desktop-analysed-phishing.png` and
 `docs/report/desktop-api-down.png`.
+
+Or work entirely in a notebook: open `notebooks/07_analyst_ui.ipynb` in Jupyter,
+run the setup cell, then call `analyse(text)` or use the interactive panel. The
+model runs in the notebook itself, so no server is needed.
 
 To rebuild the data and retrain from scratch:
 

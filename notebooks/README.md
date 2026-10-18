@@ -31,6 +31,7 @@ Rules for this folder:
 | `04_evaluate.ipynb` | Test-set evaluation, once. The four figures, per-corpus breakdown, M0 against M1 comparison, false-positive review |
 | `05_loco.ipynb` | Leave-one-corpus-out: six folds, six scores, the gap against the headline number |
 | `06_xai.ipynb` | LIME explanations for M0 and M1 on the same emails, the stability check across seeds, and the Integrated Gradients cross-check for M1 |
+| `07_analyst_ui.ipynb` | The analyst UI as a notebook page: worked examples committed with rendered results, an "analyse your own email" cell and an interactive panel. Uses `src/notebook_ui/`; needs no server |
 
 ## Integration
 
