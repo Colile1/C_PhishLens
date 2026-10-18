@@ -16,6 +16,7 @@ the content security policy can forbid every external source.
 | `index.html` | Analyse page: email input, verdict, probability meter, highlighted explanation, strongest signals |
 | `model.html` | Model page: provenance of the served model from `/metadata`, and the known limitations |
 | `guide.html` | User guide: how to use the page and what its terms mean |
+| `about.html` | About: what PhishLens is in plain words, how the parts connect, then expandable sections on the data, model, training, evaluation, explanations, API, security, deployment, clients and testing. Live facts from `/metadata` |
 | `static/css/theme.css` | The stylesheet (a plain Material-style theme), with a PhishLens section at the end: email input, meter, token shading, narrow-screen layout |
 | `static/js/common.js` | Shared helpers: `apiCall` (reads the API's own error detail, including FastAPI's list form), `showBanner`, `buildTable` |
 | `static/js/charts.js` | Formatting and disclosure helpers; used here for `fmt` and `explainer` |
@@ -23,6 +24,7 @@ the content security policy can forbid every external source.
 | `static/js/tokens.js` | Token shading and signal ranking. Rendering only. Mirrors `src/desktop/highlight.py` and `signals.py` |
 | `static/js/analyse.js` | Analyse page: calls `/predict` and shows the verdict at once, then `/explain` with a seconds counter, since LIME is slow on small hosts |
 | `static/js/model.js` | Model page: calls `/metadata` once the model is loaded |
+| `static/js/about.js` | About page: fills the live facts from `/metadata` |
 
 ## Behaviour it gets right
 

@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 from phishlens.config.loader import load_config
 from phishlens.serving.app import WEB_DIR, create_app
 
-PAGES = ("index.html", "model.html", "guide.html")
+PAGES = ("index.html", "model.html", "guide.html", "about.html")
 ASSET_PATTERN = re.compile(r'(?:src|href)="(static/[^"]+)"')
 
 

@@ -1132,3 +1132,29 @@ fieldset legend {
     padding: 16px;
   }
 }
+
+/* Tables in black and white: black text and hairlines, white background,
+   no tinted header or hover wash. */
+.data-table th,
+.data-table td {
+  color: #000;
+  background: #fff;
+  border: 1px solid #000;
+}
+
+.data-table th {
+  font-weight: 500;
+}
+
+.data-table th:hover {
+  color: #000;
+}
+
+.data-table th[data-sort="asc"]::after,
+.data-table th[data-sort="desc"]::after {
+  color: #000;
+}
+
+.data-table tbody tr:hover {
+  background: #fff;
+}

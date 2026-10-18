@@ -1,0 +1,193 @@
+<!-- about.html - About page: what PhishLens is, then expandable sections on how
+     every part works and connects. Author: Colile Sibanda -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>About - PhishLens</title>
+  <link rel="stylesheet" href="static/css/theme.css">
+</head>
+<body>
+  <header class="app-bar">
+    <span class="app-name">PhishLens</span>
+    <span class="breadcrumb">About</span>
+  </header>
+
+  <div class="shell">
+    <nav class="nav-rail">
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation">Menu</button>
+      <ul>
+        <li><a href="index.html">Analyse</a></li>
+        <li><a href="model.html">Model</a></li>
+        <li class="nav-divider"><span>Help</span></li>
+        <li><a href="guide.html">User guide</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+      </ul>
+    </nav>
+
+    <main class="content">
+      <div class="card">
+        <div class="card-head">
+          <p class="card-title">About PhishLens</p>
+          <span id="pulse" class="pulse idle">API: checking...</span>
+        </div>
+        <p class="prose">
+          PhishLens reads the subject and body of an email and says whether it
+          looks like phishing, how sure it is, and which words pushed it to that
+          answer. It is built to help a security analyst sort a queue of
+          reported emails: it ranks and explains, and a person still decides.
+        </p>
+        <p class="prose">
+          It was built as the ITRI625 Machine Learning project at North-West
+          University (2026) by Colile Sibanda. The sections below go from a
+          short overview to the full technical detail; open any of them to read
+          further.
+        </p>
+        <dl class="detail-list" id="live-facts">
+          <dt>Model served now</dt><dd id="fact-model">loading...</dd>
+          <dt>Decision threshold</dt><dd id="fact-threshold">loading...</dd>
+          <dt>Code version (commit)</dt><dd id="fact-commit">loading...</dd>
+          <dt>Source code</dt><dd><a href="https://github.com/Colile1/C_PhishLens">github.com/Colile1/C_PhishLens</a></dd>
+        </dl>
+        <div id="page-banner"></div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">How the parts connect</p>
+        <p class="card-body">
+          One trained model, one API in front of it, and three ways to use it.
+          Every client sees the same verdict because every request goes through
+          the same code path.
+        </p>
+        <ol class="guide-steps">
+          <li><strong>Data pipeline</strong> (offline): six public email collections are cleaned, de-duplicated and split into training, validation and test sets.</li>
+          <li><strong>Training and evaluation</strong> (offline, in Jupyter notebooks): the Text-CNN is trained with early stopping, evaluated once on the test set, and explained.</li>
+          <li><strong>The API</strong> (FastAPI): loads the trained model once at start-up and answers <code>/predict</code> and <code>/explain</code>.</li>
+          <li><strong>The clients</strong>: this browser UI and the Tkinter desktop app call the API over HTTP; the notebook UI can run the same model in-process.</li>
+          <li><strong>Hosting</strong>: the API and this UI run in a Docker container on Render, rebuilt from GitHub on every change.</li>
+        </ol>
+
+        <details class="explainer">
+          <summary>What happens when you click Analyse email</summary>
+          <div class="explainer-body">
+            <ol class="plain-list">
+              <li>The page sends your text to <code>POST /predict</code> and shows the verdict as soon as it returns, then sends it to <code>POST /explain</code> for the highlighted words.</li>
+              <li>The security layer checks the request rate for your address and, for explanations, the rate across all users. Over the limit, the answer is HTTP 429 with a Retry-After header.</li>
+              <li>The request schema rejects blank text (HTTP 422, naming the <code>text</code> field) and text over 50 000 characters (HTTP 413, stating the limit).</li>
+              <li>The text is normalised: lower-cased, HTML removed, links replaced by <code>&lt;url&gt;</code>, addresses by <code>&lt;email&gt;</code>, numbers by <code>&lt;num&gt;</code>.</li>
+              <li>It is split into tokens and each token is mapped to its vocabulary index (unknown words map to <code>&lt;unk&gt;</code>), then padded or cut to 400 tokens.</li>
+              <li>The Text-CNN produces one score (a logit); a sigmoid turns it into the probability of phishing, and the verdict is phishing at or above the decision threshold.</li>
+              <li>For the explanation, LIME scores 1 000 variations of the email with words removed, fits a simple model to how the probability moves, and gives each word a signed weight.</li>
+              <li>Each weight is attached to every occurrence of its word with character offsets into the normalised text, and the page shades exactly those characters.</li>
+            </ol>
+          </div>
+        </details>
+      </div>
+
+      <div class="card">
+        <p class="card-title">Technical details</p>
+        <p class="card-body">
+          Each section explains one part of the system: what it does, why it is
+          built that way, and where its code lives in the repository.
+        </p>
+
+        <details class="explainer">
+          <summary>Data: sources, cleaning, de-duplication and the split</summary>
+          <div class="explainer-body">
+            <p>The data is the Kaggle phishing email dataset, which pools six public collections: CEAS-08, Enron, Ling, Nazario, Nigerian Fraud and SpamAssassin, about 82 000 emails. Label 1 is phishing or spam, 0 is legitimate. Only the subject and body are used; sender, date and URL columns are kept out of the model because they carry archive-specific residue.</p>
+            <p>Cleaning strips HTML, joins subject and body with a separator, drops empty or near-empty rows and two rows that are mailbox parser residue rather than emails (<code>src/phishlens/data/cleaning.py</code>).</p>
+            <p>The pooled collections overlap: the same scam template appears many times with only a name or an amount changed. A random split would put near-copies on both sides and inflate every score. So each email gets a content hash computed after aggressive normalisation (lower case, no digits, no punctuation), emails with the same hash form a group, and whole groups are assigned to a split: 70% training, 15% validation, 15% test, stratified by label (<code>hashing.py</code>, <code>splitter.py</code>). The split is drawn once, written to disk and reused by every model.</p>
+          </div>
+        </details>
+
+        <details class="explainer">
+          <summary>The model: a Text-CNN, and the baseline it is compared with</summary>
+          <div class="explainer-body">
+            <p>M1, the served model, is a convolutional network for text (Kim, 2014) written in PyTorch: a 128-dimensional word embedding over a 40 000-word vocabulary, three parallel 1-D convolutions of width 3, 4 and 5 words with 100 filters each, ReLU, max-over-time pooling, dropout 0.5, and one linear output. The filters act as phrase detectors ("verify your account"), and max-pooling makes the model indifferent to where in the email a phrase appears (<code>src/phishlens/models/text_cnn.py</code>).</p>
+            <p>M0, the baseline, is TF-IDF over words and word pairs into logistic regression (<code>models/baseline.py</code>). It is the number M1 has to beat, and it comes close: most of the signal in this data is which words appear.</p>
+          </div>
+        </details>
+
+        <details class="explainer">
+          <summary>Training: the loop, patience and best-weight restore</summary>
+          <div class="explainer-body">
+            <p>Training is an explicit PyTorch loop (<code>src/phishlens/training/loop.py</code>), shown in full in <code>notebooks/03_train_cnn.ipynb</code>. Each epoch logs accuracy, precision, recall, F1, macro-F1, AUC-ROC and loss for training and validation to a CSV.</p>
+            <p>Early stopping watches validation macro-F1 with a patience of 3 epochs: an improvement smaller than 0.001 does not count. The best epoch's weights are saved whenever the score improves and restored when training stops, so the model that is evaluated and served is the best one, never simply the last one. The positive class is weighted to balance the training set, and every source of randomness is seeded from one value in the config.</p>
+          </div>
+        </details>
+
+        <details class="explainer">
+          <summary>Evaluation: the threshold, the test set, and the honesty checks</summary>
+          <div class="explainer-body">
+            <p>The decision threshold is chosen on the validation set to maximise macro-F1, then applied unchanged to the test set, which is used once, at the end (<code>notebooks/04_evaluate.ipynb</code>). Results are reported at that threshold and at 0.5.</p>
+            <p>A high score on pooled collections can come from recognising which archive an email came from rather than phishing. Two checks measure this. A corpus probe trains a simple classifier to predict the source collection from the text: it succeeds most of the time, so archive markers are present (<code>tests/critical/test_corpus_probe.py</code>). A leave-one-corpus-out evaluation trains on five collections and tests on the sixth: scores drop, and that drop is the honest estimate of performance on mail from a new source (<code>notebooks/05_loco.ipynb</code>). Both are in the report next to the headline numbers.</p>
+          </div>
+        </details>
+
+        <details class="explainer">
+          <summary>Explanations: LIME, character offsets and the Integrated Gradients cross-check</summary>
+          <div class="explainer-body">
+            <p>LIME (Ribeiro et al., 2016) treats the model as a black box: it removes words at random, watches the probability, and fits a small linear model whose weights become the word weights. It runs on the normalised text with the project's own tokeniser, so the words it weighs are exactly the words the model saw. The explanation is local: it describes this one email, not the model in general.</p>
+            <p>The alignment step (<code>src/phishlens/explain/attributions.py</code>) walks the text's own tokens in order and attaches each weight with start and end character offsets. Tests prove the offsets on repeated words, words inside other words and the placeholders.</p>
+            <p>As a cross-check, Integrated Gradients (Sundararajan et al., 2017, via Captum) attributes the model's score using its own gradients against an all-padding baseline. The two methods agree closely on short emails and less on long ones, where LIME's sampling is thinner (<code>notebooks/06_xai.ipynb</code>).</p>
+          </div>
+        </details>
+
+        <details class="explainer">
+          <summary>The API: endpoints, validation and model loading</summary>
+          <div class="explainer-body">
+            <p>The API is FastAPI (<code>src/phishlens/serving/</code>), started by <code>run_api.py</code>. At start-up it loads the vocabulary, the best checkpoint and the validation-selected threshold once; requests never reload anything. It has four endpoints: <code>GET /health</code>, <code>GET /metadata</code> (model id, threshold, seed, training commit, vocabulary hash, dataset version), <code>POST /predict</code> and <code>POST /explain</code>. Interactive documentation is at <a href="/docs">/docs</a>.</p>
+            <p>The model is reached through one prediction function that LIME, the API and the notebooks all share, so an explanation always describes the deployed pipeline. Errors are returned as messages that name the problem, never as stack traces.</p>
+          </div>
+        </details>
+
+        <details class="explainer">
+          <summary>Security: what protects the public service</summary>
+          <div class="explainer-body">
+            <ul class="plain-list">
+              <li>Rate limits per client address: 30 scoring requests and 6 explanations a minute, plus 30 explanations a minute across all users, because each explanation costs real CPU time. The client address is read from the proxy chain counting only trusted hops, so a forged X-Forwarded-For header cannot dodge the limit.</li>
+              <li>At most 16 concurrent connections; more get HTTP 503.</li>
+              <li>Security headers on every response, and on these pages a content security policy that allows only this site's own files: no third-party script, style or font.</li>
+              <li>Email text is placed in the page with <code>textContent</code>, never as HTML, so pasted content cannot run script. No CORS, so other sites cannot read the API's answers.</li>
+              <li>Nothing you paste is stored. The container runs as a non-root user, the dependencies are audited for known vulnerabilities, and the repository holds no credentials.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="explainer">
+          <summary>Deployment: Docker on Render, built from GitHub</summary>
+          <div class="explainer-body">
+            <p><code>render.yaml</code> declares one free web service built from <code>deploy/render/Dockerfile</code>: Python 3.11, CPU-only PyTorch and only the serving dependencies, then the code, the config, the trained model, its vocabulary and its threshold file. Data and notebooks never enter the image. A small config override sets the address and port, so no serving code changes between local and hosted runs.</p>
+            <p>Render rebuilds and redeploys on every push to the main branch. The free instance has a fraction of one CPU and 512 MB of memory: the service uses about 300 MB at rest and about 410 MB under load. An explanation takes about a minute there (a few seconds on a laptop), which is why the verdict is shown first. After 15 idle minutes the service sleeps, and the next visit takes about a minute to wake it.</p>
+          </div>
+        </details>
+
+        <details class="explainer">
+          <summary>The three clients: browser, desktop and notebook</summary>
+          <div class="explainer-body">
+            <p><strong>Browser UI</strong> (<code>src/web/</code>): plain HTML, CSS and JavaScript with no build step and no third-party code, served by the API itself at <code>/ui/</code>, so it is always the same origin as the API.</p>
+            <p><strong>Desktop app</strong> (<code>src/desktop/</code>, <code>run_app.py</code>): Tkinter, calling the API over HTTP on a background thread so the window never freezes, with a live API status indicator and readable error messages.</p>
+            <p><strong>Notebook UI</strong> (<code>notebooks/07_analyst_ui.ipynb</code>, <code>src/notebook_ui/</code>): <code>analyse(text)</code> or an interactive panel, running the model in-process with no server, or calling a running API.</p>
+            <p>None of the clients contains model code; all three render the same response, and all three show the same caution that the model assists and does not decide.</p>
+          </div>
+        </details>
+
+        <details class="explainer">
+          <summary>Testing and reproducibility</summary>
+          <div class="explainer-body">
+            <p>More than 200 automated tests run with <code>pytest</code>. A critical subset guards the results themselves: no content-hash group crosses two splits, metrics match values worked out by hand, early stopping restores the best epoch, and explanation offsets land on the right characters. The notebooks are committed with every output visible, and a script checks that only the evaluation notebook ever reads the test set.</p>
+            <p>Every metric file records the code commit, the seed and a hash of the split configuration, and <code>/metadata</code> reports the same for the served model, so any number or screenshot can be traced to the code that produced it.</p>
+          </div>
+        </details>
+      </div>
+    </main>
+  </div>
+
+  <script src="static/js/common.js"></script>
+  <script src="static/js/charts.js"></script>
+  <script src="static/js/health.js"></script>
+  <script src="static/js/about.js"></script>
+</body>
+</html>
