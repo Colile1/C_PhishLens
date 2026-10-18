@@ -102,6 +102,13 @@ model.eval()
 print(f"Restored checkpoint: {checkpoint_path}")
 
 
+# Scoring a whole split in one forward pass needs a multi-gigabyte activation
+# tensor; fixed-size batches cap peak memory at one batch. The model is in
+# eval mode with no batch-dependent layers, so batching changes probabilities
+# only by float32 rounding (about 1e-7): no prediction or reported metric moves.
+INFERENCE_BATCH_SIZE = 512
+
+
 def predict_m1(texts: list[str]) -> np.ndarray:
     """Encode texts and return M1 probabilities from the restored model.
 
@@ -109,9 +116,12 @@ def predict_m1(texts: list[str]) -> np.ndarray:
     Output: 1-D numpy array of sigmoid probabilities for the positive class.
     """
     sequences = encode(texts, vocabulary, config)
+    chunks = []
     with torch.no_grad():
-        logits = model(torch.from_numpy(sequences))
-    return torch.sigmoid(logits).numpy()
+        for start in range(0, len(sequences), INFERENCE_BATCH_SIZE):
+            batch = torch.from_numpy(sequences[start:start + INFERENCE_BATCH_SIZE])
+            chunks.append(torch.sigmoid(model(batch)).numpy())
+    return np.concatenate(chunks)
 
 
 # %% [markdown]
