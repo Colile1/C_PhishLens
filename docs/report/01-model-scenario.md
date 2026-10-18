@@ -13,7 +13,8 @@ discovered after the losses are already reported.
 The model sits in front of that queue. Each forwarded message is scored from its
 subject and body, and the queue is ordered by that score so the most likely
 phishing is read first. Alongside the score the model returns the tokens that
-drove it, which the analyst sees as highlighted words in the desktop client.
+drove it, which the analyst sees as highlighted words in the desktop, browser or
+notebook client (section 5).
 The analyst therefore reads a decision and a reason together, and can overrule
 a wrong score in seconds rather than reconstructing the model's logic from
 nothing.

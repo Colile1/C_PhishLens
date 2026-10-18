@@ -68,6 +68,8 @@ deployment; the desktop shots from the running Tkinter app.
 | [23-live-model-provenance.png](23-live-model-provenance.png) | The Model page: which model is served, its commit and vocabulary hash, and its known limitations |
 | [24-live-user-guide.png](24-live-user-guide.png) | The built-in user guide and glossary |
 | [25-live-ui-phone-width.png](25-live-ui-phone-width.png) | The same flow at phone width |
+| [33-live-about-page.png](33-live-about-page.png) | The About page: a plain overview, the live facts, and how the parts connect |
+| [34-live-about-technical-details.png](34-live-about-technical-details.png) | The About page with every technical section open: data, model, training, evaluation, explanations, API, security, deployment, clients, testing |
 
 **On the desktop** (Tkinter, `python run_app.py`)
 
@@ -84,6 +86,6 @@ deployment; the desktop shots from the running Tkinter app.
 |---|---|
 | [26-api-interactive-docs.png](26-api-interactive-docs.png) | The four endpoints in the live interactive API docs |
 | [27-api-metadata-provenance.png](27-api-metadata-provenance.png) | `/metadata`: model id, threshold, seed, training commit, vocabulary hash, dataset version |
-| [30-tests-and-notebook-audit.png](30-tests-and-notebook-audit.png) | The 84 guard tests and the full suite of 210 passing, and the notebook audit passing |
+| [30-tests-and-notebook-audit.png](30-tests-and-notebook-audit.png) | The 84 guard tests and the full suite of 211 passing, and the notebook audit passing |
 | [28-github-repository.png](28-github-repository.png) | The repository on GitHub |
 | [29-github-commit-history.png](29-github-commit-history.png) | The commit history: small commits across the project's eleven working days |

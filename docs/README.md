@@ -6,8 +6,8 @@ Everything written rather than executed.
 |------|----------|
 | `dataset-card.md` | Source, per-corpus counts, class balance, duplicate rate, licence and access conditions, known limitations |
 | `references.md` | The reference list, with a note per entry on what it supports and where it is cited |
-| `report/` | The theory report: four Markdown sections, the compiled Word document, and the desktop-app screenshots |
-| `screenshots/` | 32 captioned screenshots telling the project's story, from the data audit to the live deployment, indexed in its README |
+| `report/` | The report: five Markdown sections (four theory sections and the system section), the compiled Word documents (version 1, and version 2 with section 5), and the desktop-app screenshots |
+| `screenshots/` | 34 captioned screenshots telling the project's story, from the data audit to the live deployment, indexed in its README |
 
 ## Rules
 

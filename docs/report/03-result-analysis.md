@@ -203,8 +203,8 @@ false positive and borderline cases agreement is high (Jaccard 0.875 to 1.0),
 but on the confident phishing case M1's explanations agree across seeds at only
 0.1538, sharing four tokens of fifteen. Explanations of this model's most
 confident predictions are therefore not stable enough to present to an analyst
-as a definitive reason, and the desktop application's highlighting should be
-read as indicative. Predicted probabilities were identical across seeds
+as a definitive reason, and the highlighting in the clients should be read as
+indicative. Predicted probabilities were identical across seeds
 (spread 0.0), so the instability is in the local explanation, not the model.
 
 The explanations were cross-checked with Integrated Gradients (Sundararajan,

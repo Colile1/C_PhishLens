@@ -126,8 +126,11 @@ def _signals_table(tokens: list[dict], top_n: int) -> str:
     rows = [(t, "towards phishing") for t in phishing] + [(t, "towards legitimate") for t in legitimate]
     if not rows:
         return "<p>No word carried any weight in this explanation.</p>"
+    cell = "style='border:1px solid #000;background:#fff;color:#000;padding:4px 10px;text-align:left'"
     body = "".join(
-        f"<tr><td>{escape(t['token'])}</td><td>{direction}</td><td>{t['weight']:+.4f}</td></tr>"
+        f"<tr><td {cell}>{escape(t['token'])}</td><td {cell}>{direction}</td><td {cell}>{t['weight']:+.4f}</td></tr>"
         for t, direction in rows
     )
-    return f"<table><tr><th>word</th><th>direction</th><th>weight</th></tr>{body}</table>"
+    head = "".join(f"<th {cell}>{name}</th>" for name in ("word", "direction", "weight"))
+    # Black and white, with explicit cell styles so notebook themes cannot shade rows.
+    return f"<table style='border-collapse:collapse'><tr>{head}</tr>{body}</table>"

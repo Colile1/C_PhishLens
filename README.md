@@ -56,7 +56,7 @@ The full analysis is in `docs/report/`. Every number above is in
 
 ## Screenshots
 
-The whole project in 34 captioned screenshots, from the data audit to the live
+The whole project in 36 captioned screenshots, from the data audit to the live
 deployment: [docs/screenshots/](docs/screenshots/README.md).
 
 | Browser UI (live) | Desktop app | Notebook UI |
