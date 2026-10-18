@@ -14,7 +14,7 @@ from phishlens.data.splitter import MANIFEST_FILE, SPLIT_NAMES, config_hash, loa
 
 # Realised proportions and label balance are drawn per group, so they land
 # near the target rather than exactly on it. One percentage point is the
-# tolerance step 4 achieved; a regression past it means the draw changed.
+# tolerance the committed split achieved; a regression past it means the draw changed.
 TOLERANCE = 0.01
 
 

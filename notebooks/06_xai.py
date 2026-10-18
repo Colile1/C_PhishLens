@@ -16,8 +16,8 @@
 # Purpose: turn each model's verdict into evidence an analyst can read. For
 # the same emails, explain M0 (TF-IDF + Logistic Regression) and M1
 # (Text-CNN) with LIME, compare what each one keys on, and measure how far
-# an explanation moves when only LIME's random seed changes. This is build
-# step 12 and the XAI half of the extra features. Author: Colile Sibanda.
+# an explanation moves when only LIME's random seed changes. Author: Colile
+# Sibanda.
 #
 # **Sign convention, stated once and followed everywhere** (see
 # `src/phishlens/explain/README.md`): a **positive** weight pushes the
@@ -94,9 +94,9 @@ print(f"Stability seeds: {list(config.explain.stability_seeds)}")
 # %% [markdown]
 # ## The explanation path, printed in full
 #
-# Per `notebooks/README.md`, the logic a reader needs to read is printed
+# Per `notebooks/README.md`, the logic a reader needs to check is printed
 # into the notebook with `inspect.getsource` rather than only imported. The
-# two functions below are the whole of the build correctness claim:
+# two functions below are the whole of the alignment's correctness claim:
 # `align_to_tokens` is the off-by-one guard, and `explain_text` is the LIME
 # wrapper that decides what string is explained.
 #
@@ -116,14 +116,14 @@ print(inspect.getsource(explain_text))
 # %% [markdown]
 # ## Load the splits and both models
 #
-# M1 is the checkpoint with the best epoch's weights
+# M1 is the committed checkpoint with the best epoch's weights
 # restored : the same weights `04_evaluate.ipynb` reported test numbers for.
 # M0 is refit here on the training split, exactly as `04_evaluate.ipynb`
 # fits it, because the baseline pipeline is not persisted to disk.
 #
 # Both are wrapped by `explain/predict_fn.py` into the *same* two-column
 # probability contract LIME expects. That wrapper is the same code path the
-# `/explain` endpoint will call : `explain/README.md`
+# `/explain` endpoint calls : `explain/README.md`
 # requires that the function handed to LIME is the deployed path, not a
 # reimplementation of it, since an explanation of a different pipeline is
 # not an explanation.
@@ -171,7 +171,7 @@ print(f"M1 training mode (must be False): {m1_model.training}")
 #    threshold and where an explanation is worth the most.
 #
 # Selection uses M1's validation probabilities and the threshold selected on
-# validation, the same the design discipline as `04_evaluate.ipynb`. Nothing here
+# validation, the same validation-only discipline as `04_evaluate.ipynb`. Nothing here
 # touches the test split.
 
 # %%
@@ -560,6 +560,193 @@ print(f"Alignment invariants verified on {checked} real explanations.")
 print("Every offset slices back to its own token; spans are disjoint and in order.")
 
 # %% [markdown]
+# ## Cross-check: Integrated Gradients for M1
+#
+# LIME treats M1 as a black box. Integrated Gradients (Sundararajan et al.,
+# 2017) instead uses the model's own gradients: it walks a straight path from
+# a **baseline** input to the email and adds up how much each token's
+# embedding moved the phishing logit along the way. If two methods built on
+# different principles point at the same tokens, that is better evidence the
+# tokens really drove the verdict than either method alone.
+#
+# How it is set up (`src/phishlens/explain/integrated_gradients.py`):
+#
+# - **Baseline:** the all-`<pad>` sequence. Pad's embedding is fixed at zero,
+#   so the baseline is "no words at all", and padded positions receive exactly
+#   zero attribution.
+# - **Sign:** attributions are to the phishing logit, so a positive score
+#   pushes towards phishing : the same convention as LIME, with no re-signing.
+# - **Completeness:** the scores must add up to logit(email) minus
+#   logit(baseline). The function refuses a result that misses by more than
+#   5% of that gap, so every row below has passed this check.
+# - **Alignment:** encoder position *i* is token *i* of the normalised text,
+#   the same token list `align_to_tokens` walks, so scores land on the same
+#   character offsets the LIME explanation uses.
+#
+# Two differences matter when reading the comparison. LIME scores a word
+# **type** (removing every occurrence at once), while IG scores each
+# **occurrence**, so IG is summed per word type before the two are compared.
+# And M1 uses max-over-time pooling, which passes gradient only to the
+# window that wins each filter : a word repeated in the email can be credited
+# at one occurrence and score zero at the others.
+
+# %%
+from phishlens.explain.integrated_gradients import integrated_gradients
+from phishlens.explain.method_agreement import method_agreement
+
+print(inspect.getsource(integrated_gradients))
+
+# %%
+ig_results = {}
+ig_rows = []
+for name, bundle in explanations.items():
+    ig = integrated_gradients(bundle["row"]["text"], m1_model, vocabulary, config)
+    agreement = method_agreement(bundle["m1"], ig)
+    ig_results[name] = {"ig": ig, "agreement": agreement}
+    gap = ig.logit - ig.baseline_logit
+    ig_rows.append(
+        {
+            "case": name,
+            "logit gap": round(gap, 4),
+            "attribution sum": round(sum(entry.weight for entry in ig.tokens), 4),
+            "completeness error": round(abs(ig.convergence_delta), 6),
+            "tokens seen": ig.tokens_seen,
+            "LIME/IG jaccard": round(agreement.jaccard, 4),
+            "sign agreement": agreement.sign_agreement,
+        }
+    )
+    print(f"{name}")
+    print(f"  LIME top tokens: {', '.join(agreement.lime_top)}")
+    print(f"  IG top tokens:   {', '.join(agreement.ig_top)}")
+    print(f"  Shared: {', '.join(agreement.shared) or 'none'}")
+    print()
+
+ig_table = pd.DataFrame(ig_rows)
+ig_table
+
+# %%
+ig_checked = 0
+for name, result in ig_results.items():
+    ig = result["ig"]
+    lime_tokens = explanations[name]["m1"].tokens
+    assert all(ig.text[e.start : e.end] == e.token for e in ig.tokens), f"IG offset mismatch for {name}"
+    assert [(e.token, e.start, e.end) for e in ig.tokens] == [
+        (e.token, e.start, e.end) for e in lime_tokens
+    ], f"IG and LIME disagree on token positions for {name}"
+    ig_checked += 1
+
+print(f"IG explanations whose offsets slice back to their tokens: {ig_checked} of {len(ig_results)}")
+print(f"IG token positions identical to LIME's: {ig_checked == len(ig_results)}")
+print(f"Largest completeness error: {ig_table['completeness error'].max():.2e}")
+print(f"Mean LIME/IG top-k Jaccard: {ig_table['LIME/IG jaccard'].mean():.4f}")
+print(f"Mean sign agreement on shared tokens: {ig_table['sign agreement'].dropna().mean():.4f}")
+
+# %%
+ig_figure = ig_results[figure_case]
+lime_weights = {entry.token: entry.weight for entry in explanations[figure_case]["m1"].top}
+ig_type_weights = ig_figure["ig"].type_weights()
+# Top 7 from each method, so words only one method ranks highly are shown.
+figure_words = list(dict.fromkeys(list(ig_figure["agreement"].lime_top[:7]) + list(ig_figure["agreement"].ig_top[:7])))
+
+# The two methods use different units (LIME: surrogate coefficients; IG:
+# logit contributions), so each is scaled by its own largest absolute value.
+lime_scale = max(abs(w) for w in lime_weights.values()) or 1.0
+ig_scale = max(abs(ig_type_weights.get(t, 0.0)) for t in figure_words) or 1.0
+
+fig, ax = plt.subplots(figsize=(9, 0.45 * len(figure_words) + 2))
+rows = range(len(figure_words))
+height = 0.38
+ax.barh([r - height / 2 for r in rows], [lime_weights.get(t, 0.0) / lime_scale for t in figure_words],
+        height=height, label="LIME (scaled)", color="#2166ac")
+ax.barh([r + height / 2 for r in rows], [ig_type_weights.get(t, 0.0) / ig_scale for t in figure_words],
+        height=height, label="Integrated Gradients (scaled)", color="#d6604d")
+ax.set_yticks(list(rows))
+ax.set_yticklabels(figure_words)
+ax.invert_yaxis()
+ax.axvline(0.0, color="black", linewidth=0.8)
+ax.set_xlabel("Scaled attribution (positive pushes towards phishing)")
+ax.set_title(f"M1 Text-CNN : LIME against Integrated Gradients : {figure_case}")
+ax.legend(loc="lower right")
+fig.tight_layout()
+
+figure_path = Path(config.paths.figures) / "xai_lime_vs_ig.png"
+figure_path.parent.mkdir(parents=True, exist_ok=True)
+fig.savefig(figure_path, dpi=config.evaluation.figure_dpi)
+plt.show()
+print(f"Figure saved to {figure_path}")
+
+# %%
+# The strongest IG tokens per case, signed, with each one's share of the
+# logit gap (attributions sum to the gap, so shares are comparable).
+for name, result in ig_results.items():
+    ig = result["ig"]
+    gap = ig.logit - ig.baseline_logit
+    weights = ig.type_weights()
+    print(f"{name} (logit gap {gap:+.2f})")
+    for token in sorted(weights, key=lambda t: -abs(weights[t]))[:8]:
+        direction = "phishing" if weights[token] > 0 else "legitimate"
+        print(f"  {token!r:>14}  {weights[token]:+8.3f}  towards {direction:<10}  {weights[token] / gap:+7.1%} of gap")
+    print()
+
+
+# %% [markdown]
+# ### Reading the LIME and IG comparison
+#
+# - **The mechanics hold on real emails.** Every IG offset slices back to its
+#   own token and sits at exactly the position LIME uses, and every run passed
+#   the completeness check: the attributions add up to the logit gap, with the
+#   largest error shown above, well inside the 5% tolerance.
+# - **Where the email is short, the two methods agree almost completely.** On
+#   the false positive and the borderline email the top-k sets overlap heavily
+#   and the shared tokens point the same way. For the false positive this is
+#   the important result: a gradient-based method, built on different
+#   principles from LIME, independently finds the salutation (*madam, sir,
+#   dear*) pushing towards phishing and the topical words (*macintosh,
+#   korean*) pulling towards legitimate, with the same signs LIME gave. The
+#   reading of that mistake in section 3.5 of the report, a formal greeting
+#   outweighing the subject matter, is therefore not an artefact of LIME's
+#   sampling.
+# - **On long emails they diverge, and IG reads more plausibly.** The
+#   confident phishing email (an advance-fee letter, truncated at 400 tokens)
+#   is exactly the case where LIME was unstable across seeds (Jaccard 0.15 in
+#   the stability table). There IG pushes towards phishing on the advance-fee
+#   vocabulary (*thousand, money, country, dollars, million, bank*) where LIME
+#   surfaced *god's, vos, trust*; IG also finds a word pulling the other way
+#   (*guardian*). With 1 000 perturbations spread over hundreds of distinct
+#   words, LIME's surrogate is thin; IG has no sampling step to be thin.
+# - **IG puts a number on the corpus artefact.** For the confident legitimate
+#   email, the single token *enron* carries the large majority of the logit
+#   gap on its own (see the share printed above). The model is confident this
+#   email is legitimate mostly because it names the Enron archive, which is
+#   the corpus-recognition effect the corpus probe measures, here
+#   visible inside one prediction.
+# - **Where they share a token, they almost always agree on its direction**
+#   (mean sign agreement above), so the two methods disagree about *which*
+#   tokens matter most far more often than about *which way* a token pushes.
+#
+
+# %%
+import json
+
+ig_payload = {
+    "commit": run_commit,
+    "seed": config.seed,
+    "method": "integrated_gradients",
+    "baseline": "all <pad> (zero embedding)",
+    "ig_steps": config.explain.ig_steps,
+    "emails_explained": ig_checked,
+    "max_completeness_error": float(ig_table["completeness error"].max()),
+    "mean_lime_ig_jaccard": round(float(ig_table["LIME/IG jaccard"].mean()), 4),
+    "mean_sign_agreement": round(float(ig_table["sign agreement"].dropna().mean()), 4),
+    "per_case": [
+        {**row, "agreement": ig_results[row["case"]]["agreement"].as_dict()} for row in ig_rows
+    ],
+}
+ig_metrics_path = Path(config.paths.metrics) / "xai_ig_agreement.json"
+ig_metrics_path.write_text(json.dumps(ig_payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+print(f"LIME/IG agreement metrics written to {ig_metrics_path}")
+
+# %% [markdown]
 # ## Summary for the report
 #
 # The numbers this notebook contributes to report sections 3.3 and 3.4, and
@@ -623,8 +810,14 @@ print(f"Stability and agreement metrics written to {explain_metrics_path}")
 #   nothing else. That overlap is reported as a stated limitation, not
 #   smoothed over : it is the honest caveat attached to every highlighted
 #   token the desktop app will show.
+# - **A second method agrees where it matters.** Integrated Gradients, which
+#   uses M1's gradients rather than sampling, lands on the same offsets,
+#   satisfies completeness on every email, confirms the false-positive
+#   reading, and shows the corpus artefact directly (*enron* alone carries
+#   most of the legitimate email's logit gap). It disagrees with LIME mainly
+#   on long emails, where LIME was already unstable across seeds.
 # - **An explanation is local.** These weights describe each individual
 #   prediction, not the model's global behaviour. The global question : is
 #   the model reading phishing or reading corpus artefacts : is answered by
-#   the corpus probe and the leave-one-corpus-out evaluation
-#, not by LIME.
+#   the corpus probe and the leave-one-corpus-out evaluation,
+#   not by LIME.

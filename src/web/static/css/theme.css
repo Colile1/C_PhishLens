@@ -1047,7 +1047,7 @@ fieldset legend {
   border-left-color: var(--failed);
 }
 
-/* Probability meter: the fill is P(phishing); the reader is the
+/* Probability meter: the fill is P(phishing); the black line is the
    decision threshold. Both are printed as numbers beside it. */
 .meter {
   position: relative;

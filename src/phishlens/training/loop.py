@@ -99,8 +99,8 @@ def _run_epoch(
 def _write_history(history: list[dict[str, float]], path: Path) -> None:
     """Write the per-epoch metric history to CSV, one row per epoch.
 
-    This file is the evidence for the brief's 15 points, so it
-    is rewritten after every epoch rather than only at the end: a run that
+    This file is the per-epoch metric record (accuracy, precision, recall,
+    F1, AUC-ROC, loss), so it is rewritten after every epoch rather than only at the end: a run that
     crashes mid-training still leaves the epochs it completed.
 
     Inputs: history : list of flat per-epoch dicts; path : destination CSV.
@@ -129,10 +129,9 @@ def train(
     """Train the model with patience-based early stopping and best-weight restore.
 
     The loop is deliberately explicit and readable: it is printed into the
-    training notebook with inspect.getsource so a reader can read the patience
-    logic without leaving the notebook, and the brief awards marks for
-    patience implemented in the main loop rather than delegated to a framework
-    callback.
+    training notebook with inspect.getsource so a reader can check the patience
+    logic without leaving the notebook, and the patience is implemented in the
+    main loop rather than delegated to a framework callback.
 
     The behaviour that has to be exactly right:
 

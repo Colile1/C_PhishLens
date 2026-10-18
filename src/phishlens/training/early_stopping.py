@@ -9,10 +9,10 @@ class EarlyStopping:
     """Patience counter over a validation score, with min_delta.
 
     A pure state machine: it sees floats, never tensors or models, so its
-    behaviour is unit-testable on a hand-written list of scores. Five marks
-    ride on this being right.
+    behaviour is unit-testable on a hand-written list of scores, and the
+    reported test numbers depend on it being right.
 
-    The rules, stated so a later session cannot quietly change them:
+    The rules, stated so they cannot be changed quietly:
 
     1. An epoch counts as an improvement only if it beats the best score so
        far by at least `min_delta`. An improvement smaller than min_delta does

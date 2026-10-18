@@ -3,7 +3,7 @@
 # Author: Colile Sibanda
 #
 # Nothing in src/ may hard-code a value that belongs here. The config loader
-# validates this file and fails with the name of any missing or
+# (src/phishlens/config/) validates this file and fails with the name of any missing or
 # invalid field. Copy to configs/local.yaml for machine-specific overrides;
 # local.yaml is git-ignored.
 
@@ -19,7 +19,7 @@ paths:
   metrics: artifacts/metrics
 
 data:
-  # Corpus files expected in paths.raw. Confirm the exact names.
+  # Corpus files expected in paths.raw, as named in the Kaggle download.
   corpora:
     - CEAS_08.csv
     - Enron.csv
@@ -84,14 +84,15 @@ training:
     restore_best_weights: true
 
 evaluation:
+  decision_threshold: 0.5     # untuned reference; the served threshold is selected on validation
   figure_dpi: 150
 
 explain:
   method: lime
   num_features: 15            # tokens shown per explanation
   num_samples: 1000           # LIME perturbations per explanation
-  stability_seeds: [42, 1337] # same email, two seeds, compared at step 12
-  ig_steps: 64                # Integrated Gradients path steps (M1 cross-check, the design)
+  stability_seeds: [42, 1337] # same email, two seeds, compared in notebooks/06_xai.ipynb
+  ig_steps: 64                # Integrated Gradients path steps (M1 cross-check)
 
 serving:
   host: 127.0.0.1

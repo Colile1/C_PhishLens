@@ -117,7 +117,7 @@ def predict_m1(texts: list[str]) -> np.ndarray:
 # %% [markdown]
 # ## Refit M0 on train, per `02_baseline.ipynb`
 #
-# M0 has no persisted artefact from step 7, so it is refit here on the same
+# M0 has no persisted artefact from `02_baseline.ipynb`, so it is refit here on the same
 # training split for a fair test-set comparison.
 
 # %%
@@ -216,7 +216,7 @@ per_corpus_table(per_corpus_metrics)
 
 # %% [markdown]
 # **Reading Nazario and Nigerian_Fraud:** both corpora are 100% phishing in
-# every split (see `docs/dataset-card.md` and the the build finding in
+# every split (see `docs/dataset-card.md`) : there are no legitimate rows to score. `auc_roc` and
 # `average_precision` are correctly NaN (undefined with a single class
 # present, per `compute_metrics`'s documented behaviour) and `macro_f1`
 # collapses to roughly half of the true positive-class F1, because macro
@@ -245,7 +245,7 @@ false_positives[["corpus", "probability", "text"]].head(10)
 # %% [markdown]
 # ## Save test-set metrics
 #
-# M0's test-set numbers are new : `m0_baseline.json` from step 7 is
+# M0's test-set numbers are new : `m0_baseline.json` from `02_baseline.ipynb` is
 # validation-only and must not be overwritten with test numbers.
 
 # %%

@@ -106,7 +106,7 @@ print(f"Positive-class weight (train only): {positive_weight.item():.4f}")
 # ## The model class
 #
 # Printed with `inspect.getsource` so the architecture is readable without
-# leaving the notebook, per the notebook README and the question fallback.
+# leaving the notebook, per the notebook README.
 
 # %%
 print(inspect.getsource(TextCNN))
@@ -157,8 +157,8 @@ figure.show()
 # %% [markdown]
 # ## Per-epoch metric table
 #
-# One row per epoch, all train/validation columns : the evidence for the
-# per-iteration metric-logging marks. Backed by
+# One row per epoch, all train/validation columns : the per-iteration
+# metric log. Backed by
 # `artifacts/metrics/training_log.csv`, rewritten every epoch.
 
 # %%

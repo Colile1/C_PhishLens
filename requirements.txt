@@ -1,5 +1,5 @@
 # requirements.txt : C_PhishLens
-# Purpose: pinned project dependencies (output of pip freeze, the build).
+# Purpose: pinned project dependencies (output of pip freeze).
 # Author: Colile Sibanda
 
 annotated-doc==0.0.5

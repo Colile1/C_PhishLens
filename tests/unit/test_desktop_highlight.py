@@ -99,7 +99,7 @@ def test_every_tagged_span_slices_back_to_its_own_token(widget):
     """The off-by-one guard: a span must cover its token and nothing else.
 
     A misaligned map would highlight a confident, false explanation in the
-    demo, which is exactly what the build was marked critical for.
+    demo, which is exactly why the alignment is treated as correctness-critical.
     """
     highlight.render_attributions(widget, TEXT, TOKENS)
 

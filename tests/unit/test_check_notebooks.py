@@ -1,5 +1,5 @@
 # test_check_notebooks.py
-# Purpose: unit tests for the notebook audit used in the step 16 review.
+# Purpose: unit tests for the notebook audit in scripts/check_notebooks.py.
 # Author: Colile Sibanda
 
 from __future__ import annotations

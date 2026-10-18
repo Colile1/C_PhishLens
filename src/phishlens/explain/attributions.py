@@ -47,7 +47,7 @@ class TokenWeight:
 def align_to_tokens(text: str, weights: dict[str, float]) -> list[TokenWeight]:
     """Attach LIME's per-word weights to every token occurrence in `text`.
 
-    This is the function the build is marked correctness-critical for. It
+    This is the correctness-critical function of the explain package. It
     walks the text's own tokens in order and looks each one up in the weight
     map, rather than walking the weight map and searching the text. That
     direction is deliberate and is what prevents the off-by-one: the output is
@@ -60,7 +60,7 @@ def align_to_tokens(text: str, weights: dict[str, float]) -> list[TokenWeight]:
     at the first one.
 
     `text` must be the same string that was handed to LIME : the normalised
-    text, not the raw email. Passing raw text here
+    text, not the raw email, because that is the string the model sees. Passing raw text here
     would produce offsets into a string the model never saw.
 
     Inputs: text : the explained text, already normalised; weights : LIME's

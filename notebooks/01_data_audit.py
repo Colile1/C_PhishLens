@@ -15,8 +15,7 @@
 #
 # Purpose: report per-corpus row counts, class balance, empty/corrupted rows,
 # duplicate rate and text-length distributions for the six pooled Kaggle
-# corpora. Produces the evidence that decides the question. Author:
-# Colile Sibanda.
+# corpora, and records how the task is framed. Author: Colile Sibanda.
 
 # %%
 import os
@@ -66,7 +65,7 @@ print(f"Description: pooled row count: {len(pooled)}")
 #
 # The positive label (1) mixes true phishing (Nazario, Nigerian Fraud) with
 # bulk spam (CEAS-08, Enron, Ling, SpamAssassin). This split is exactly what
-# decides the question below.
+# decides the task framing below.
 
 # %%
 counts_table = (
@@ -188,7 +187,7 @@ for corpus_name, df in corpora.items():
         print(f"  label={label_value} | body: {body!r}")
 
 # %% [markdown]
-# ## Deciding Q2
+# ## Deciding the task framing
 #
 # **Question:** frame the task as "phishing/spam vs legitimate" (honest to
 # the labels actually present in the pooled corpus), or restrict positives to
@@ -200,8 +199,7 @@ for corpus_name, df in corpora.items():
 #   contributes a single legitimate example. Restricting positives to these
 #   two corpora would mean the negative class comes entirely from four other
 #   corpora and the positive class from two, which is precisely the kind of
-#   corpus/label confound this project's artefact guard exists to avoid
-#.
+#   corpus/label confound this project's artefact guard exists to avoid.
 # - CEAS-08, Enron, Ling and SpamAssassin all mix both classes, so the
 #   "phishing/spam vs legitimate" framing draws its positive examples from
 #   six different corpora and its negative examples from four : not a clean
@@ -213,10 +211,10 @@ for corpus_name, df in corpora.items():
 # **Decision:** frame the task as **phishing/spam vs legitimate**, using the
 # labels as provided across all six corpora. This is honest to what the
 # labels actually encode, keeps the positive class from being tied to two
-# in §4.1. The corpus probe and LOCO evaluation
+# specific source corpora. The corpus probe and the LOCO evaluation
 # exist precisely to surface and report the corpus-confound risk this
 # decision does not eliminate : restricting to Nazario + Nigerian Fraud
 # would not remove that risk, it would just hide it inside a smaller,
 # single-purpose positive class.
 #
-
+# print("Description: task framing : phishing/spam vs legitimate, all six corpora")

@@ -51,11 +51,10 @@ def compute_epoch_metrics(
 ) -> EpochMetrics:
     """Score one epoch's predictions on one split.
 
-    A deliberately minimal helper so the training loop can
-    write its per-epoch CSV without pulling the build evaluation layer
-    forward onto the wrong step. Step 9 builds `evaluation/metrics.py` with a
-    hand-checked confusion matrix and its own critical test; step 10's real M1
-    run reports from that module, not this one.
+    A deliberately minimal helper so the training loop can write its
+    per-epoch CSV without depending on the evaluation layer.
+    `evaluation/metrics.py` has the hand-checked confusion matrix and its own
+    critical test; reported M1 results come from that module, not this one.
 
     Inputs: labels : 1-D array of true 0/1 labels; probabilities : 1-D array
     of predicted probabilities for the positive class; loss : the mean loss

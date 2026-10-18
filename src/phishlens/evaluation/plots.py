@@ -1,5 +1,5 @@
 # plots.py
-# Purpose: the four Matplotlib figures the brief requires, each returned unsaved.
+# Purpose: the four Matplotlib evaluation figures, each returned unsaved.
 # Author: Colile Sibanda
 
 from __future__ import annotations
@@ -17,9 +17,8 @@ from sklearn.metrics import (
 
 from phishlens.evaluation.metrics import Metrics
 
-# Figure sizes match the ones the build established in notebooks/02_baseline.py,
-# so the M0 figures already committed and the M1 figures step 10 produces sit
-# side by side in the report at the same scale.
+# Figure sizes match the ones established in notebooks/02_baseline.py, so the
+# M0 figures and the M1 figures from notebooks/04_evaluate.ipynb sit side by side in the report at the same scale.
 CURVE_FIGSIZE = (6, 5)
 MATRIX_FIGSIZE = (5, 5)
 
@@ -48,8 +47,8 @@ def plot_roc(
     """Draw the ROC curve with a chance diagonal for reference.
 
     The figure is returned rather than saved: the notebook displays it inline,
-    which is what matters, and decides for itself whether to write a
-    file.
+    so every figure is visible in the notebook, and decides for itself whether
+    to write a file.
 
     Inputs: labels : 1-D array of true 0/1 labels; probabilities : 1-D array of
     predicted probabilities for the positive class; model_name, split_name :
@@ -135,8 +134,7 @@ def plot_loss_curve(history: Sequence[dict[str, float]], model_name: str) -> Fig
 
     Consumes `TrainingResult.history` from the training loop directly. Two
     series means the legend is not optional : a single unlabelled loss curve
-    cannot be read for overfitting, which is the whole reason the brief asks
-    for this figure.
+    cannot be read for overfitting, which is the whole reason for this figure.
 
     Inputs: history : one flat dict per epoch carrying "epoch", "train_loss"
     and "val_loss", as the training loop produces; model_name : named in the

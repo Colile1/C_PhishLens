@@ -1,4 +1,4 @@
-# 4. Real-world use of machine learning in cybersecurity (7 points)
+# 4. Real-world use of machine learning in cybersecurity
 
 *Intrusion detection, threat classification, anomaly detection and risk
 assessment: effectiveness, strengths, limitations, and the challenges of data

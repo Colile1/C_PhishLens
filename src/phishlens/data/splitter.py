@@ -340,7 +340,7 @@ def load_split(config: Config) -> SplitIndex:
     if not manifest_path.is_file():
         raise FileNotFoundError(
             f"No split manifest at {manifest_path}. Build the split first "
-            "(the build, notebooks/01_data_audit.ipynb or scripts)."
+            "with scripts/build_splits.py."
         )
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 

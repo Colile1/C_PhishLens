@@ -1,4 +1,4 @@
-# 1. Model scenario (3 points)
+# 1. Model scenario
 
 *How is this model useful in the context of cybersecurity?*
 

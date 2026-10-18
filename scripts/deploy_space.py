@@ -12,7 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEPLOY_DIR = REPO_ROOT / "deploy"
 
 # Everything the image needs, and nothing else: no data, notebooks or
-# scaffolding leave the machine.
+# working files leave the machine.
 TREES = ("src/phishlens", "src/web")
 FILES = (
     "run_api.py",

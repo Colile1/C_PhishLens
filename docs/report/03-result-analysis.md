@@ -1,4 +1,4 @@
-# 3. Model result analysis (10 points)
+# 3. Model result analysis
 
 *Explain the results using the metrics and graphs. Is the model effective?*
 

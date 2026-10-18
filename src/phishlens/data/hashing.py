@@ -9,7 +9,7 @@ import re
 import unicodedata
 
 # Normalisation used for grouping only. It is deliberately more destructive
-# than the model's own preprocessing (features/, the build): two emails
+# than the model's own preprocessing (features/): two emails
 # from the same template that differ only in a name, a date, an amount or a
 # tracking id must collapse to one hash, because those are exactly the
 # near-duplicates that leak across a random split. This text is never a model

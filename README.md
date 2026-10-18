@@ -1,48 +1,76 @@
 # C_PhishLens
 
-**Project:** ITRI625 Machine Learning project : North-West University, Semester 2, 2026
-**Author:** Colile Sibanda
-**Repository:** https://github.com/Colile1/C_PhishLens
-**Live demo:** https://phishlens-vdc9.onrender.com (free hosting: the first visit after 15 idle minutes takes about a minute to wake)
-
 A deep learning classifier that decides whether an email is phishing or
-legitimate from its subject and body text alone, and returns the tokens that
-drove the decision. It is served by a FastAPI endpoint and used through a
-Tkinter desktop application, so the model is something an analyst can actually
-open and paste a message into.
+legitimate from its subject and body text alone, and shows the words that drove
+the decision, so an analyst can check the verdict instead of trusting it.
 
-The project's central claim is not the headline F1. Pooled phishing corpora
-hand you a high score cheaply, because a model can learn which corpus an email
-came from instead of learning phishing. C_PhishLens measures that risk with a
-source-corpus probe and a leave-one-corpus-out evaluation, and reports both
-next to the headline number.
+**Live demo:** https://phishlens-vdc9.onrender.com (free hosting: the first visit
+after 15 idle minutes takes about a minute to wake)
+**Author:** Colile Sibanda · ITRI625 Machine Learning project, North-West University, 2026
+**Repository:** https://github.com/Colile1/C_PhishLens
+
+The headline score is not the point of the project. Pooled phishing corpora give
+a high score cheaply, because a model can learn *which archive* an email came
+from instead of learning phishing. C_PhishLens measures that risk with a
+source-corpus probe and a leave-one-corpus-out evaluation, and reports both next
+to the headline number.
+
+## Results at a glance
+
+| | M0: TF-IDF + Logistic Regression | M1: Text-CNN (served) |
+|---|---|---|
+| Test macro-F1 | 0.9856 | **0.9871** |
+| Test recall (phishing) | 0.9866 | **0.9925** |
+| Test AUC-ROC | 0.9988 | **0.9991** |
+
+- **Corpus probe:** a linear model recovers an email's source archive from text
+  alone at 0.9445 accuracy, so part of any random-split score is archive
+  recognition.
+- **Leave-one-corpus-out:** with one whole archive held out, macro-F1 falls to
+  between 0.7706 and 0.9357 on the archives that contain both classes, and
+  recall on unseen real-world phishing (Nazario) is 0.5202.
+- **Explanations:** LIME token attributions, checked for stability across seeds
+  and cross-checked with Integrated Gradients.
+
+The full analysis is in `docs/report/`. Every number above is in
+`artifacts/metrics/` and visible in the notebooks.
 
 ## What it does
 
-- Classifies an email as phishing or legitimate from text alone : no headers, no URL features, no sandbox.
-- Logs accuracy, precision, recall, F1, macro-F1, AUC-ROC and loss after every training epoch.
-- Plots ROC, precision–recall, confusion matrix and loss curves with Matplotlib, visible inside the notebooks.
-- Stops training on a patience value implemented in the main loop and restores the best weights before the test set is touched.
-- Explains a single prediction at token level with LIME, so the verdict is checkable.
-- Serves the model over FastAPI and drives a Tkinter desktop client against it.
-- Hosted publicly on Render with a browser UI: https://phishlens-vdc9.onrender.com (API docs at `/docs`).
+- Classifies an email as phishing or legitimate from text alone: no headers, no
+  URL features, no sandbox. Headers carry archive-specific residue, which is the
+  shortcut the model is kept away from.
+- Logs accuracy, precision, recall, F1, macro-F1, AUC-ROC and loss after every
+  training epoch.
+- Plots ROC, precision–recall, confusion-matrix and loss curves with Matplotlib,
+  visible inside the notebooks.
+- Stops training on a patience value implemented in the main training loop and
+  restores the best weights before the test set is touched.
+- Explains each prediction at token level (LIME), with an Integrated Gradients
+  cross-check in the XAI notebook.
+- Serves the model over FastAPI, with a Tkinter desktop client and a browser UI.
+- Runs publicly on Render, built from this repository by `render.yaml` and
+  `deploy/render/Dockerfile`, with rate limits and security headers.
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `run_api.py` | Thin entry point : starts the FastAPI service (built at step 13) |
-| `run_app.py` | Thin entry point : starts the Tkinter client (built at step 14) |
-| `configs/` | `default.yaml`: seed, paths, split ratios, model and training hyperparameters |
+| `run_api.py` | Thin entry point: starts the FastAPI service |
+| `run_app.py` | Thin entry point: starts the Tkinter client |
+| `configs/` | `default.yaml`: seed, paths, split ratios, model, training, serving settings |
 | `notebooks/` | The executable record: audit, baseline, training, evaluation, LOCO, XAI |
-| `src/phishlens/` | Core library : config, data, features, models, training, evaluation, explain, serving |
-| `src/desktop/` | Tkinter presentation layer |
-| `src/web/` | Browser front end, served by the API at `/ui/` |
-| `tests/unit/` | Unit tests for the core library |
-| `tests/critical/` | The guards: split integrity, corpus probe, metric correctness |
-| `data/` | `raw/` downloaded corpora, `interim/` cleaned, `processed/` split files : none committed |
-| `artifacts/` | Trained models, per-epoch metric CSVs, saved figures : none committed |
-| `scripts/` | Small operational helpers (download, smoke test) |
+| `src/phishlens/` | Core library: config, data, features, models, training, evaluation, explain, serving |
+| `src/desktop/` | Tkinter client |
+| `src/web/` | Browser UI, served by the API at `/ui/` |
+| `tests/unit/`, `tests/critical/` | Unit tests, and the guards every reported number depends on |
+| `data/` | `raw/`, `interim/`, `processed/`: none committed, rebuilt by `scripts/` |
+| `artifacts/` | Served model and vocabulary, metric files (committed); figures and LOCO checkpoints (rebuilt) |
+| `docs/` | Dataset card, references, the theory report |
+| `deploy/` | Docker images for hosting (Render; a Hugging Face Space variant) |
+| `scripts/` | Data download, split build, notebook audit, Space packaging |
+
+Every folder has a README describing its files.
 
 ## Quick start
 
@@ -52,7 +80,7 @@ committed with its outputs, and every metric the report quotes is in
 
 ```bash
 python -m venv .venv
-.venv\Scriptsctivate            # Windows;  source .venv/bin/activate on Linux
+.venv\Scripts\activate             # Windows;  source .venv/bin/activate elsewhere
 pip install -r requirements.txt
 
 pytest -q                          # all tests
@@ -62,65 +90,64 @@ jupyter lab notebooks/             # read the results without running anything
 ```
 
 On a fresh clone without `data/`, the split-integrity and corpus-probe guards
-skip with a message naming the missing file; the data steps below make them
-run in full. `python scripts/check_notebooks.py` confirms every notebook has
-visible outputs and that only `04_evaluate.ipynb` evaluates the test split.
+skip with a message naming the missing file. `python scripts/check_notebooks.py`
+confirms every notebook has visible outputs and that only `04_evaluate.ipynb`
+evaluates the test split.
 
 The trained model is committed (`artifacts/models/text_cnn_best.pt` and
-`vocabulary.json`), so the API and the desktop app run straight from a clone.
-In two terminals:
+`vocabulary.json`), so the API and the apps run straight from a clone:
 
 ```bash
-python run_api.py                  # FastAPI on http://127.0.0.1:8000
-python run_app.py                  # Tkinter client
-# browser UI: open http://127.0.0.1:8000/ui/ while the API runs
-```
-
-To rebuild the data and retrain from scratch instead (the retrained weights
-come out identical to the committed ones):
-
-```bash
-python scripts/download_data.py    # Kaggle corpora into data/raw/ (needs a Kaggle API token)
-python scripts/build_splits.py     # dedup + grouped train/validation/test split
-jupyter nbconvert --to notebook --execute --inplace notebooks/03_train_cnn.ipynb
+python run_api.py                  # FastAPI on http://127.0.0.1:8000, browser UI at /ui/
+python run_app.py                  # Tkinter client, in a second terminal
 ```
 
 Paste an email (or open a `.eml` / `.txt` file) and press **Analyse** or
-Ctrl+Enter. The app shows the verdict with its probability and decision
-threshold, highlights the tokens that pushed towards each class, and lists the
-strongest signals. Screenshots: `docs/report/desktop-analysed-phishing.png`
-and `docs/report/desktop-api-down.png`.
+Ctrl+Enter. The verdict comes with its probability and decision threshold, the
+words that pushed towards each class are highlighted, and the strongest signals
+are listed. Screenshots: `docs/report/desktop-analysed-phishing.png` and
+`docs/report/desktop-api-down.png`.
 
-The same flow runs in a browser: with the API started, open
-`http://127.0.0.1:8000/ui/`. It calls the same `/explain` endpoint and adds a
-Model page (provenance from `/metadata`) and a user guide. See `src/web/README.md`.
+To rebuild the data and retrain from scratch:
 
-## Reproducibility contract
+```bash
+python scripts/download_data.py    # Kaggle corpora into data/raw/ (needs a Kaggle API token)
+python scripts/build_splits.py     # cleaning, dedup, grouped train/validation/test split
+jupyter nbconvert --to notebook --execute --inplace notebooks/03_train_cnn.ipynb
+```
 
-Every number in the report is reproducible from three things: the committed
-`configs/default.yaml`, the pinned `requirements.txt`, and the commit hash
-recorded in `/metadata` and in each notebook's header cell.
+## Reproducibility
 
-One seed drives every source of randomness : `random`, `numpy`, `torch`, the
-splitter and LIME. The split is written to disk, so the same split is reused by
-every model rather than redrawn. The test set is loaded in exactly one
-notebook, once, at the end.
+Every reported number is reproducible from the committed `configs/default.yaml`,
+the pinned `requirements.txt`, and the commit hash recorded in `/metadata` and
+in each notebook's header cell.
 
-## Quality contract
+One seed drives every source of randomness: `random`, `numpy`, `torch`, the
+splitter and LIME. The split is written to disk once and reused by every model.
+De-duplication and splitting work on content-hash groups, never single rows, so
+near-identical emails cannot leak between train and test. The test set is
+loaded in exactly one notebook, once, at the end; every threshold and model
+choice is made on validation.
 
-- `pytest tests/critical` must be green before any result is quoted anywhere.
-- No content-hash group appears in more than one split. The test enforces it.
+## Quality checks
+
+- `pytest tests/critical` is green before any result is quoted.
+- No content-hash group appears in more than one split; a test enforces it.
 - Vectorisers and vocabularies are fitted on training data only.
-- Reported test metrics come from the restored best-epoch weights, never the last epoch.
-- Notebooks are committed with outputs, re-run from a clean kernel whenever `src/` changes.
-- Model code lives in `src/phishlens/` so it is tested and shared with the API, and is printed
-  into the notebooks with `inspect.getsource`: the `TextCNN` class and the `train` loop
-  (patience and best-weight restore) in `03_train_cnn.ipynb`, the attribution code in `06_xai.ipynb`.
+- Reported test metrics come from the restored best-epoch weights.
+- Notebooks are committed with outputs. Model code lives in `src/phishlens/`, so
+  it is unit-tested and shared with the API, and is printed into the notebooks
+  with `inspect.getsource`: the `TextCNN` class and the `train` loop in
+  `03_train_cnn.ipynb`, the attribution code in `06_xai.ipynb`.
 
-## Status
+## Security
 
-All build steps through 15 are complete: data pipeline with content-hash
-dedup and grouped splitting, the corpus probe and leave-one-corpus-out
-evaluation, M0 (TF-IDF + logistic regression) and M1 (Text-CNN with
-patience-based early stopping), LIME explanations, the FastAPI service, the
-Tkinter desktop client, and the four-section theory report in `docs/report/`.
+- The public API accepts email text only, stores nothing, and caps input at
+  50 000 characters.
+- Scoring endpoints are rate-limited per client (429 with `Retry-After`), and
+  the container runs as a non-root user.
+- Every response carries security headers; the browser UI has a content security
+  policy that allows no external source.
+- No credentials live in the repository: the Kaggle token stays in the user's
+  home directory, and `.env` files are ignored.
+- Do not paste real personal email into the public demo.

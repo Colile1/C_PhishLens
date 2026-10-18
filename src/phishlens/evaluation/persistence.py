@@ -24,7 +24,7 @@ def commit_hash() -> str:
 
     Every metric file records the commit that produced it, so a number in the
     report can be traced to the code that computed it. This returns a sentinel
-    rather than raising when git is unavailable : a reader running from an
+    rather than raising when git is unavailable : anyone running from an
     extracted zip has no repository, and failing there would block the
     notebooks from running at all.
 
@@ -52,6 +52,7 @@ def save_metrics(metrics: Metrics, path: Path, context: dict[str, object]) -> No
     context carries what makes it reproducible: which model, which split, the
     seed, the commit and the config hash. The config hash is passed in rather
     than computed here because it lives in `data.splitter` and this package
+    imports `config` only, which keeps the evaluation layer independent of the data layer.
 
     The threshold is written as a top-level key from the Metrics itself, not
     from the context, so it cannot be reported as something other than the

@@ -13,10 +13,10 @@ import pandas as pd
 from phishlens.config.schema import Config
 
 # Two rows in Nazario are not emails: they are mbox parser residue in which an
-# entire mailbox, headers and all, landed in one cell (the build found them
+# entire mailbox, headers and all, landed in one cell (notebooks/01_data_audit.ipynb found them
 # as 4.6M- and 1.0M-character outliers against a 766-character median). Both
 # carry this sentinel, which the mail system writes at the head of a folder's
-# internal-data record. No other corpus contains it. Dropping on the reader is
+# internal-data record. No other corpus contains it. Dropping on the sentinel is
 # exact; dropping on length would discard genuinely long emails elsewhere in
 # the pool, where bodies reach 300k characters legitimately.
 MBOX_SENTINEL = "FOLDER INTERNAL DATA"

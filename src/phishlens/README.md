@@ -1,6 +1,6 @@
 # src/phishlens/
 
-The core library. Everything the notebooks, the API and the tests import.
+The core library: everything the notebooks, the API and the tests import.
 
 ## Dependency direction
 
@@ -13,11 +13,11 @@ config  →  data  →  features  →  models  →  training  →  evaluation  �
 ```
 
 - `config`, `data`, `features`, `models`, `training`, `evaluation` and `explain`
-  are the **core**: no HTTP, no Tkinter, no notebook imports. They must be
-  testable offline with a hand-built config.
+  are the **core**: no HTTP, no Tkinter, no notebook imports. They are testable
+  offline with a hand-built config.
 - `serving` is the **integration layer**: it imports the core and exposes it over
   HTTP. Nothing in the core imports `serving`.
-- `src/desktop/` sits outside this package entirely and reaches the model only
+- `src/desktop/` and `src/web/` sit outside this package and reach the model only
   through the API.
 
 There are no cycles. If a new import would create one, the shared piece belongs
@@ -28,16 +28,15 @@ in `config` or in a new small module, not in a back-reference.
 | Folder | Responsibility |
 |--------|----------------|
 | `config/` | Load and validate `configs/*.yaml`; seed every source of randomness from one value |
-| `data/` | Load the corpora, normalise, hash for de-duplication, draw the grouped stratified split, build the leave-one-corpus-out index |
-| `features/` | Text normalisation with placeholders, TF-IDF vectoriser for M0, vocabulary and integer encoder for M1 |
-| `models/` | Model definitions only: the Text-CNN, and the baseline pipeline factory. No training code |
+| `data/` | Load the corpora, clean, hash for de-duplication, draw the grouped stratified split, build the leave-one-corpus-out index |
+| `features/` | Text normalisation with placeholders, tokeniser, TF-IDF vectoriser for M0, vocabulary and integer encoder for M1 |
+| `models/` | Model definitions only: the Text-CNN and the baseline pipeline factory. No training code |
 | `training/` | The training loop, patience-based early stopping, checkpointing, per-epoch metric logging |
-| `evaluation/` | Metric computation and the four required Matplotlib plots |
-| `explain/` | LIME wrapper producing per-token attributions, plus the stability check |
+| `evaluation/` | Metric computation, threshold selection, the four Matplotlib figures, metric files and report tables |
+| `explain/` | LIME token attributions, the stability check, and the Integrated Gradients cross-check |
 | `serving/` | FastAPI application, request and response schemas, model loading at startup |
 
-Each has its own README with its planned files and function signatures. Read the
-one for the folder you are about to touch before touching it.
+Each folder has its own README listing its files and how it is verified.
 
 ## Conventions
 
@@ -50,5 +49,5 @@ one for the folder you are about to touch before touching it.
   are deterministic.
 - Errors name the field, the file or the expected value. No bare `except`.
 
-Done when: `pytest tests/unit tests/critical` is green and no module in the core
-imports `serving`, `desktop`, or a notebook.
+Verify with `pytest tests/unit tests/critical`. No module in the core imports
+`serving`, `desktop` or a notebook.

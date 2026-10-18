@@ -1,4 +1,4 @@
-# 2. Model architecture (10 points)
+# 2. Model architecture
 
 *Explain all relevant details of the architecture, and why the model suits the
 data.*

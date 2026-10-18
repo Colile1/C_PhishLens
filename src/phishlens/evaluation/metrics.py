@@ -49,7 +49,7 @@ class Metrics:
     Carries the threshold it was computed at, so a Metrics is self-describing
     and cannot be reported beside the wrong operating point. The confusion
     matrix is stored as four named counts rather than a 2x2 array because the
-    false-positive review asks for false_positives by name,
+    false-positive review in notebooks/04_evaluate.ipynb asks for false_positives by name,
     and because a named field cannot be transposed by accident.
 
     Inputs: the seven scores, the four confusion-matrix counts, and the
@@ -195,8 +195,9 @@ def select_threshold(
 
     **Call this on the validation split only.** Selecting a threshold against
     the test split would spend the project's once-only test budget and turn a
-    threshold chosen here is then applied unchanged to test,
-    alongside the untuned 0.5 figure.
+    reported number into a tuned one: the test split is touched exactly once. The
+    threshold chosen here is then applied unchanged to test in
+    notebooks/04_evaluate.ipynb, alongside the untuned 0.5 figure.
 
     Candidates come from the precision-recall curve, which changes only at the
     distinct probability values present, so sweeping a fixed grid would test

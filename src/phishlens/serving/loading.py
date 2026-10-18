@@ -42,7 +42,7 @@ def load_threshold_and_provenance(metrics_path: Path) -> tuple[float, str, str]:
     would mean the demo shows a model that was never actually evaluated.
 
     Inputs: metrics_path : `artifacts/metrics/m1_text_cnn.json`, written by
-    `evaluation.persistence.save_metrics`.
+    `evaluation.persistence.save_metrics` in notebooks/04_evaluate.ipynb.
     Output: (threshold, training_commit, dataset_version) tuple.
 
     Raises FileNotFoundError naming the missing path if the metrics file is
@@ -52,7 +52,7 @@ def load_threshold_and_provenance(metrics_path: Path) -> tuple[float, str, str]:
     if not metrics_path.is_file():
         raise FileNotFoundError(
             f"No metrics file at {metrics_path}. Run notebooks/04_evaluate.ipynb "
-            f" first so the validation-selected threshold exists; "
+            f"first so the validation-selected threshold exists; "
             f"serving at an unevaluated default threshold is not permitted."
         )
     payload = json.loads(metrics_path.read_text(encoding="utf-8"))

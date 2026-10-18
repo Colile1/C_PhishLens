@@ -15,7 +15,7 @@ def read_email_text(path: Path) -> str:
     A .eml file is parsed and reduced to its subject and plain-text body:
     headers are dropped on purpose, because the model is trained on subject
     and body only and header residue is the corpus artefact this project
-    guards against. Any other
+    guards against (see the root README). Any other
     file is read as plain text.
 
     Inputs: path : the file to read.

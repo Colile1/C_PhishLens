@@ -129,7 +129,7 @@ def test_restore_errors_when_the_checkpoint_is_missing(tmp_path: Path) -> None:
 
 # --------------------------------------------------------------------------
 # The full loop, on a synthetic dataset with a deliberately worsening score.
-# This is the build stated done-when.
+# The core guarantee of the training loop.
 # --------------------------------------------------------------------------
 
 
@@ -311,7 +311,7 @@ def test_loop_returns_the_best_epochs_weights_not_the_last(worsening_run) -> Non
 
 
 def test_metric_csv_has_one_row_per_epoch(worsening_run) -> None:
-    """The per-epoch CSV is the evidence for the metric-logging marks."""
+    """The per-epoch CSV records every metric for every epoch."""
     result, config, _ = worsening_run
     path = Path(config.paths.metrics) / METRIC_FILE
 

@@ -67,8 +67,8 @@ def per_corpus_table(results: dict[str, Metrics]) -> pd.DataFrame:
     """Tabulate one model's scores broken down by corpus.
 
     Indexed by corpus name to match `data.loco.loco_report`, so the
-    leave-one-corpus-out results and the per-corpus breakdown
-    at step 10 line up row for row in the report.
+    leave-one-corpus-out results (notebooks/05_loco.ipynb) and the per-corpus
+    breakdown (notebooks/04_evaluate.ipynb) line up row for row in the report.
 
     Inputs: results : mapping of corpus name to that corpus's Metrics.
     Output: DataFrame indexed by corpus name, sorted by name for a stable

@@ -18,7 +18,8 @@
 # source corpus: train M1 on the other five corpora, test on the held-out
 # one, with content-hash groups shared between the two sides removed from
 # train first. Reports the six LOCO F1 scores beside the headline
-# random-split F1 and the corpus-probe accuracy in one place, per
+# random-split F1 and the corpus-probe accuracy in one place. Author:
+# Colile Sibanda.
 #
 # **Regimen:** every fold trains with the identical
 # config as `03_train_cnn.ipynb` : same architecture, batch size, learning
@@ -108,7 +109,7 @@ print(f"Corpora: {sorted(pooled['corpus'].unique())}")
 # %% [markdown]
 # ## Build the LOCO fold index
 #
-# `make_loco_index` (built at step 4, unit-tested in
+# `make_loco_index` (unit-tested in
 # `tests/unit/test_data.py::TestLoco`) returns one fold per corpus: the
 # held-out corpus's groups on the test side, every other corpus's groups on
 # the train side with any group also present in the held-out corpus removed
@@ -134,7 +135,7 @@ report
 #    patience 3 on validation macro-F1, best-weight restore.
 # 4. Scores the restored model on the held-out corpus, at both the untuned
 #    0.5 threshold and a threshold selected on the fold's own validation
-#    split (same the design discipline as `04_evaluate.ipynb`).
+#    split (the same validation-only discipline as `04_evaluate.ipynb`).
 #
 # Checkpoints and per-fold metric CSVs are written under
 # `artifacts/models/loco/<corpus>/` and `artifacts/metrics/loco/<corpus>/`
@@ -146,6 +147,31 @@ print(inspect.getsource(train))
 
 # %%
 import gc
+
+import numpy as np
+
+# Held-out corpora are large (CEAS_08 is ~39k emails). One forward pass over a
+# whole corpus asked for a single 6.5 GB activation tensor and crashed the
+# 2026-09-26 re-run with "not enough memory". Predicting in fixed-size batches
+# caps peak memory at one batch. Outputs are unchanged: the model is in eval
+# mode (dropout off) and has no batch-dependent layers, so each email's
+# probability does not depend on which other emails share its batch.
+INFERENCE_BATCH_SIZE = 512
+
+
+def predict_in_batches(model, sequences):
+    """Return sigmoid probabilities for encoded sequences, one batch at a time.
+
+    Inputs: model : a TextCNN already in eval mode; sequences : 2-D int array
+    of encoded token ids.
+    Output: 1-D numpy array of P(phishing), one per row of `sequences`.
+    """
+    chunks = []
+    with torch.no_grad():
+        for start in range(0, len(sequences), INFERENCE_BATCH_SIZE):
+            batch = torch.from_numpy(sequences[start:start + INFERENCE_BATCH_SIZE])
+            chunks.append(torch.sigmoid(model(batch)).numpy())
+    return np.concatenate(chunks)
 
 fold_results: dict[str, dict] = {}
 fold_metrics_selected = {}
@@ -222,18 +248,15 @@ for corpus in sorted(folds):
           f"{result.best_score:.4f}, stopped early: {result.stopped_early}")
 
     model.eval()
-    with torch.no_grad():
-        val_logits = model(torch.from_numpy(val_sequences))
-        test_logits = model(torch.from_numpy(test_sequences))
-    val_probabilities = torch.sigmoid(val_logits).numpy()
-    test_probabilities = torch.sigmoid(test_logits).numpy()
+    val_probabilities = predict_in_batches(model, val_sequences)
+    test_probabilities = predict_in_batches(model, test_sequences)
 
     val_labels = inner_val_df[label_column].to_numpy()
     test_labels = fold_test_side[label_column].to_numpy()
 
     default_threshold = config.evaluation.decision_threshold
-    # Nazario and Nigerian_Fraud are 100% positive in every split (step 3/10
-    # finding) : the fold's own validation carve-out inherits that, so
+    # Nazario and Nigerian_Fraud are 100% positive in every split (see
+    # docs/dataset-card.md) : the fold's own validation carve-out inherits that, so
     # select_threshold has no negative class to define an operating point
     # against. Fall back to the untuned threshold for those folds and say so.
     if val_labels.min() == val_labels.max():
@@ -291,7 +314,7 @@ for corpus in sorted(folds):
         train_sequences, val_sequences, test_sequences,
         train_dataset, val_dataset, train_loader, val_loader,
         positive_weight,
-        val_logits, test_logits, val_probabilities, test_probabilities,
+        val_probabilities, test_probabilities,
         val_labels, test_labels,
     )
     gc.collect()
@@ -328,7 +351,8 @@ fold_details
 # %% [markdown]
 # ## The headline comparison: LOCO F1 vs random-split F1 vs corpus-probe accuracy
 #
-# The three numbers that tell the honest generalisation story together, per
+# The three numbers that tell the honest generalisation story together:
+# the corpus probe shows how
 # much of the pool's separability is corpus recognition rather than
 # phishing signal; the random-split F1 is the headline number a reader sees
 # first; the LOCO F1 is what M1 scores on a corpus it never saw during
@@ -354,7 +378,7 @@ two_class_corpora = [c for c in loco_table.index if c not in ("Nazario", "Nigeri
 loco_mean_macro_f1 = loco_table.loc[two_class_corpora, "macro_f1"].mean()
 
 print(f"Corpus probe accuracy: {probe_accuracy:.4f}" if probe_accuracy is not None else "Corpus probe metrics not found.")
-print(f"Headline random-split M1 macro-F1: {headline_macro_f1:.4f}" if headline_macro_f1 is not None else "Headline M1 metrics not found.")
+print(f"Headline random-split M1 macro-F1 (test split): {headline_macro_f1:.4f}" if headline_macro_f1 is not None else "Headline M1 metrics not found.")
 print(f"LOCO mean macro-F1 across the four two-class corpora "
       f"({', '.join(two_class_corpora)}): {loco_mean_macro_f1:.4f}")
 if headline_macro_f1 is not None:

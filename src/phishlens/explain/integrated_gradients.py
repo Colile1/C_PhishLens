@@ -27,6 +27,7 @@ class IGExplanation:
     """Integrated Gradients attributions for one email under M1.
 
     Inputs: text : the normalised text every offset indexes into (as LIME,
+    the same convention LIME uses); tokens : one TokenWeight per token occurrence, in
     order, positive towards phishing; logit, baseline_logit : model output for
     the email and for the all-pad baseline; convergence_delta : Captum's
     completeness error; tokens_seen : how many leading tokens fit in

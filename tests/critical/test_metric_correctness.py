@@ -56,7 +56,7 @@ def _close_figures():
 
 
 # --------------------------------------------------------------------------
-# The hand-checked confusion matrix. This is the build stated done-when.
+# The hand-checked confusion matrix: every metric is derived from these counts.
 # --------------------------------------------------------------------------
 
 
@@ -323,7 +323,7 @@ def test_agrees_with_the_per_epoch_helper_on_every_shared_metric() -> None:
     """compute_metrics and compute_epoch_metrics score identically.
 
     training/epoch_metrics.py deliberately duplicates part of this module so
-    the build could stay inside its own folder. That duplication is only
+    the training layer does not depend on the evaluation layer. That duplication is only
     safe while the two agree: if either drifts, the per-epoch CSV and the
     reported headline numbers would describe the same model differently.
     """
@@ -362,7 +362,7 @@ def _history() -> list[dict[str, float]]:
 def test_all_four_figures_carry_a_title_and_labelled_axes(hand_metrics) -> None:
     """Every required figure is self-describing. This is the README's rule.
 
-    A figure in the report with an unlabelled axis costs marks and cannot be
+    A figure in the report with an unlabelled axis misleads and cannot be
     interpreted, so the labels are asserted rather than left to discipline.
     """
     figures = {
