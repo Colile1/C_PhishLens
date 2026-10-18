@@ -1,8 +1,5 @@
 # 2. Model architecture
 
-*Explain all relevant details of the architecture, and why the model suits the
-data.*
-
 The deliverable model, M1, is a Text-CNN implemented in PyTorch, following the
 sentence-classification architecture of Kim (2014). A TF-IDF and logistic
 regression model, M0, is trained on the same splits as a reference point.

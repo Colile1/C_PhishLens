@@ -1,9 +1,5 @@
 # 4. Real-world use of machine learning in cybersecurity
 
-*Intrusion detection, threat classification, anomaly detection and risk
-assessment: effectiveness, strengths, limitations, and the challenges of data
-quality, concept drift and false positives.*
-
 ## 4.1 The four application areas
 
 **Intrusion detection.** Network and host intrusion detection is the most

@@ -1,7 +1,5 @@
 # 3. Model result analysis
 
-*Explain the results using the metrics and graphs. Is the model effective?*
-
 Every figure referenced here is rendered inline in the notebooks named. Every
 number is read from the committed artefacts in `artifacts/metrics/`, not from a
 later or unrecorded run.
@@ -175,7 +173,8 @@ new.
 ## 3.5 False positives and what the explanations reveal
 
 The LIME analysis (`notebooks/06_xai.ipynb`,
-`artifacts/metrics/xai_stability.json`) was run on four cases, and the false
+`artifacts/metrics/xai_stability.json`; Figure 5 shows M1's attributions for the
+confidently flagged phishing email) was run on four cases, and the false
 positive is the informative one.
 
 On a legitimate message that both models flagged, M0 assigned P(phishing) = 0.8661
@@ -211,7 +210,7 @@ read as indicative. Predicted probabilities were identical across seeds
 The explanations were cross-checked with Integrated Gradients (Sundararajan,
 Taly & Yan, 2017), computed through Captum (Kokhlikyan et al., 2020) at M1's
 embedding layer against an all-padding baseline (`notebooks/06_xai.ipynb`,
-`artifacts/metrics/xai_ig_agreement.json`). Unlike LIME it uses the network's own
+`artifacts/metrics/xai_ig_agreement.json`; Figure 6). Unlike LIME it uses the network's own
 gradients and has no sampling step, and its attributions sum to the difference
 between the email's logit and the baseline's; that completeness property held on
 every case, with a largest error of 0.0138. Three results matter.

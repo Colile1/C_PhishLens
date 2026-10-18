@@ -1,7 +1,5 @@
 # 1. Model scenario
 
-*How is this model useful in the context of cybersecurity?*
-
 ## The operational setting
 
 The scenario this model is built for is the abuse mailbox of a South African
