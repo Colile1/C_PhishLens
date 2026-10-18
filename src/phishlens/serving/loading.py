@@ -18,14 +18,19 @@ UNKNOWN_COMMIT = "unknown"
 
 
 def vocabulary_hash(path: Path) -> str:
-    """Hash a vocabulary file's raw bytes, for the metadata endpoint.
+    """Hash a vocabulary file's content, for the metadata endpoint.
+
+    Line endings are normalised to LF first. Git checks the file out with
+    CRLF on Windows and LF on Linux, so hashing raw bytes gave the same
+    vocabulary two different hashes on a local run and on the hosted
+    service.
 
     Inputs: path : the vocabulary JSON file on disk.
     Output: a short SHA-256 hex digest identifying the exact vocabulary the
-    loaded model was encoded with.
+    loaded model was encoded with, identical on every platform.
     """
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()
-    return digest[:16]
+    content = path.read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(content).hexdigest()[:16]
 
 
 def load_threshold_and_provenance(metrics_path: Path) -> tuple[float, str, str]:

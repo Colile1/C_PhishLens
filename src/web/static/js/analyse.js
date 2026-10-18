@@ -90,9 +90,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     button.disabled = true;
     button.textContent = "Analysing...";
-    showBanner(banner, "Analysing. The explanation runs LIME, so this takes a few seconds.", "info");
+    showResults(false);
+    const started = Date.now();
+    const tick = () => showBanner(banner,
+      `Explaining the verdict: ${Math.round((Date.now() - started) / 1000)} s. LIME scores ` +
+      "1 000 variations of the email, which takes seconds locally and up to a minute on the hosted demo.", "info");
+    let timer = null;
     try {
-      const result = await apiCall("/explain", { method: "POST", body: { text: input.value } });
+      // The verdict is fast; show it first, then fill in the slower explanation.
+      const body = { text: input.value };
+      renderVerdict(await apiCall("/predict", { method: "POST", body }));
+      document.getElementById("result-card").hidden = false;
+      tick();
+      timer = setInterval(tick, 1000);
+      const result = await apiCall("/explain", { method: "POST", body });
+      clearInterval(timer);
       clearChildren(banner);
       renderVerdict(result);
       renderTokens(document.getElementById("tokens"), result.text, result.tokens);
@@ -106,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ]));
       showResults(true);
     } catch (err) {
+      clearInterval(timer);
       showResults(false);
       showBanner(banner, err.message === "Failed to fetch"
         ? "Cannot reach the PhishLens API. Start it with python run_api.py and reload this page."

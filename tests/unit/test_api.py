@@ -119,3 +119,13 @@ def test_explain_empty_text_returns_422_naming_text(client: TestClient) -> None:
     body = response.json()
     fields = [entry["loc"][-1] for entry in body["detail"]]
     assert "text" in fields
+
+
+def test_vocabulary_hash_ignores_line_endings(tmp_path) -> None:
+    from phishlens.serving.loading import vocabulary_hash
+
+    lf = tmp_path / "lf.json"
+    crlf = tmp_path / "crlf.json"
+    lf.write_bytes(b'{\n  "a": 1\n}\n')
+    crlf.write_bytes(b'{\r\n  "a": 1\r\n}\r\n')
+    assert vocabulary_hash(lf) == vocabulary_hash(crlf)

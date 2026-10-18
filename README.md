@@ -3,6 +3,7 @@
 **Project:** ITRI625 Machine Learning project : North-West University, Semester 2, 2026
 **Author:** Colile Sibanda
 **Repository:** https://github.com/Colile1/C_PhishLens
+**Live demo:** https://phishlens-vdc9.onrender.com (free hosting: the first visit after 15 idle minutes takes about a minute to wake)
 
 A deep learning classifier that decides whether an email is phishing or
 legitimate from its subject and body text alone, and returns the tokens that
@@ -24,6 +25,7 @@ next to the headline number.
 - Stops training on a patience value implemented in the main loop and restores the best weights before the test set is touched.
 - Explains a single prediction at token level with LIME, so the verdict is checkable.
 - Serves the model over FastAPI and drives a Tkinter desktop client against it.
+- Hosted publicly on Render with a browser UI: https://phishlens-vdc9.onrender.com (API docs at `/docs`).
 
 ## Layout
 
