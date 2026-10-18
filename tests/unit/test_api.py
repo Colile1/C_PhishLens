@@ -102,7 +102,7 @@ def test_explain_offsets_index_into_the_submitted_text(client: TestClient) -> No
     assert body["text"], "expected the normalised text the offsets index into"
 
     # Every reported token must slice back out of `text` at its own offsets:
-    # this is the design contract the desktop app's highlighting depends on.
+    # this is the offset contract the desktop app's highlighting depends on.
     for entry in body["tokens"]:
         assert entry["end"] > entry["start"]
         assert body["text"][entry["start"] : entry["end"]] == entry["token"]

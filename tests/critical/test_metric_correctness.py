@@ -227,7 +227,7 @@ def test_the_wrong_probability_column_is_visible_in_auc() -> None:
 
 
 # --------------------------------------------------------------------------
-# Threshold behaviour, including the >= boundary and the design selection helper.
+# Threshold behaviour, including the >= boundary and the validation-only selection helper.
 # --------------------------------------------------------------------------
 
 
