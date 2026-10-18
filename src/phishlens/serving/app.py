@@ -15,6 +15,7 @@ from phishlens.config.schema import Config
 from phishlens.serving.errors import register_error_handlers
 from phishlens.serving.model_service import load_model_service
 from phishlens.serving.routes import router
+from phishlens.serving.security import install_security
 
 APP_TITLE = "PhishLens API"
 
@@ -53,6 +54,7 @@ def create_app(config: Config) -> FastAPI:
     app.state.model_service = None
     app.include_router(router)
     register_error_handlers(app)
+    install_security(app, config.serving)
     if WEB_DIR.is_dir():
         app.mount(WEB_MOUNT, StaticFiles(directory=WEB_DIR, html=True), name="web")
         app.add_api_route("/", _redirect_to_ui, include_in_schema=False)

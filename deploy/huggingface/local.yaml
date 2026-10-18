@@ -8,3 +8,4 @@
 serving:
   host: 0.0.0.0
   port: 7860
+  trusted_proxy_hops: 1   # the Spaces proxy appends the client address to X-Forwarded-For

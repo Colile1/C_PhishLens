@@ -91,6 +91,11 @@ VALID_CONFIG: dict = {
         "port": 8000,
         "model_file": "artifacts/models/text_cnn_best.pt",
         "max_input_characters": 50000,
+        "rate_limit_per_minute": 30,
+        "explain_rate_limit_per_minute": 6,
+        "explain_global_limit_per_minute": 30,
+        "max_concurrent_requests": 16,
+        "trusted_proxy_hops": 0,
     },
     "desktop": {
         "api_base_url": "http://127.0.0.1:8000",
@@ -137,6 +142,13 @@ def test_non_positive_ig_steps_is_rejected():
     raw = copy.deepcopy(VALID_CONFIG)
     raw["explain"]["ig_steps"] = 0
     with pytest.raises(ConfigError, match="ig_steps"):
+        validate(raw)
+
+
+def test_non_positive_rate_limit_is_rejected():
+    raw = copy.deepcopy(VALID_CONFIG)
+    raw["serving"]["explain_rate_limit_per_minute"] = 0
+    with pytest.raises(ConfigError, match="explain_rate_limit_per_minute"):
         validate(raw)
 
 

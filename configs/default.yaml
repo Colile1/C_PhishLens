@@ -99,7 +99,14 @@ serving:
   port: 8000
   model_file: artifacts/models/text_cnn_best.pt
   max_input_characters: 50000
+  # Abuse limits. /explain runs LIME (1 000 forward passes), so it is the
+  # expensive endpoint and gets a per-client and a global cap.
+  rate_limit_per_minute: 30            # /predict + /explain, per client
+  explain_rate_limit_per_minute: 6     # /explain, per client
+  explain_global_limit_per_minute: 30  # /explain, all clients together
+  max_concurrent_requests: 16          # further connections get 503
+  trusted_proxy_hops: 0                # 0 when clients connect directly; 1 behind one reverse proxy
 
 desktop:
   api_base_url: http://127.0.0.1:8000  # point here at a hosted API to demo remotely
-  request_timeout_seconds: 30.0        # /explain runs LIME, so allow well over /predict
+  request_timeout_seconds: 90.0        # /explain runs LIME; a small hosted instance needs about a minute

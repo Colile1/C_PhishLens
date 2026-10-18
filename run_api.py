@@ -15,10 +15,17 @@ def main() -> None:
 
     Inputs: none.
     Output: none; blocks, serving the API on `config.serving.host:port`.
+    Connections beyond `config.serving.max_concurrent_requests` get a 503.
     """
     config = load_config()
     app = create_app(config)
-    uvicorn.run(app, host=config.serving.host, port=config.serving.port)
+    uvicorn.run(
+        app,
+        host=config.serving.host,
+        port=config.serving.port,
+        limit_concurrency=config.serving.max_concurrent_requests,
+        server_header=False,
+    )
 
 
 if __name__ == "__main__":

@@ -178,7 +178,10 @@ class ExplainConfig:
 class ServingConfig:
     """FastAPI serving configuration.
 
-    Inputs: host, port, model file path, max accepted input length.
+    Inputs: host, port, model file path, max accepted input length, and the
+    abuse limits: per-client request rates, a global /explain rate, the
+    concurrent-connection cap, and how many reverse proxies to trust when
+    reading the client address from X-Forwarded-For.
     Output: immutable ServingConfig.
     """
 
@@ -186,6 +189,11 @@ class ServingConfig:
     port: int
     model_file: str
     max_input_characters: int
+    rate_limit_per_minute: int
+    explain_rate_limit_per_minute: int
+    explain_global_limit_per_minute: int
+    max_concurrent_requests: int
+    trusted_proxy_hops: int
 
 
 @dataclass(frozen=True)

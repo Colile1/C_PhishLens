@@ -76,7 +76,11 @@ _REQUIRED_EVALUATION = ("decision_threshold", "figure_dpi")
 
 _REQUIRED_EXPLAIN = ("method", "num_features", "num_samples", "stability_seeds", "ig_steps")
 
-_REQUIRED_SERVING = ("host", "port", "model_file", "max_input_characters")
+_REQUIRED_SERVING = (
+    "host", "port", "model_file", "max_input_characters", "rate_limit_per_minute",
+    "explain_rate_limit_per_minute", "explain_global_limit_per_minute",
+    "max_concurrent_requests", "trusted_proxy_hops",
+)
 
 _REQUIRED_DESKTOP = ("api_base_url", "request_timeout_seconds")
 
@@ -185,6 +189,14 @@ def validate(raw: dict[str, Any]) -> None:
     _require_fields(raw["serving"], _REQUIRED_SERVING, "serving")
     if not (0 < raw["serving"]["port"] < 65536):
         raise ConfigError("Config field 'serving.port' must be a valid TCP port.")
+    for name in ("rate_limit_per_minute", "explain_rate_limit_per_minute",
+                 "explain_global_limit_per_minute", "max_concurrent_requests"):
+        value = raw["serving"][name]
+        if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+            raise ConfigError(f"Config field 'serving.{name}' must be a positive integer, got {value!r}.")
+    hops = raw["serving"]["trusted_proxy_hops"]
+    if not isinstance(hops, int) or isinstance(hops, bool) or hops < 0:
+        raise ConfigError(f"Config field 'serving.trusted_proxy_hops' must be 0 or more, got {hops!r}.")
 
     _require_fields(raw["desktop"], _REQUIRED_DESKTOP, "desktop")
     if not str(raw["desktop"]["api_base_url"]).strip():
